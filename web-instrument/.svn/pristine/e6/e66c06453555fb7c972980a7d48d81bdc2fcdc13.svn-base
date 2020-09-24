@@ -1,0 +1,129 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+	class Ujipetikauto_controller extends CI_Controller {
+    private $cat;
+    private $menu;
+    private $submenu;
+    private $module;
+    private $url;
+
+    function __construct()
+    {
+        parent :: __construct();
+
+        $this->cat = $this->input->post('cat');
+        $this->menu = $this->input->post('menu');
+        $this->submenu = $this->input->post('submenu');
+        $this->module = $this->input->post('module');
+        $this->url = "$this->menu/$this->submenu/$this->module";
+
+        $this->load->model('user_model');
+        $this->load->model('hakakses_model');
+        $this->load->model('ujipetik_model');
+        $this->load->model('devices_model');
+
+    }
+
+    function do_action(){
+        
+        date_default_timezone_set('Asia/Jakarta');
+        
+        $data['cat'] = $this->cat;
+        $data['submenu_title'] = $this->input->post('submenu_title');
+        $data['module_title'] = $this->input->post('module_title');
+        $data['module_id'] = $this->input->post('module_id');
+
+        $action = $this->input->post('action');
+		$param_data = $this->input->post('data');
+
+		$admin = $this->session->userdata('is_admin');
+		$id_user = $this->session->userdata('id_user');
+		$permit = $this->hakakses_model->user_permission (  $id_user, $data['module_id'] , $admin );
+		//print_r($permit);
+		$data['is_create'] = $permit['is_create'];
+		$data['is_update'] = $permit['is_update'];
+		$data['is_delete'] = $permit['is_delete'];
+        
+        $date = date("Y-m-d");
+        cek_sesi();
+
+        switch($action){
+            case 'showdata':
+                $no_pack = $param_data[1];
+                $data['analisa'] = $this->ujipetik_model->show_analisa($no_pack, $date, $display = true);
+                $data['param'] = $this->ujipetik_model->get_param_uji($no_pack);
+                $this->load->view( $this->url . '/show_daftar_analisa',$data);
+            break;
+            case 'open_form_analisa':
+                $no_pack = $param_data[1];
+                $data['jenis'] = $no_pack;
+                $data['param'] = $this->ujipetik_model->get_param_uji($no_pack);
+                $this->load->view( $this->url . '/show_form_analisa',$data);
+            break;
+			case 'open_detil_analisa':
+				$id = $param_data[1];
+				$data['analisa'] = $this->ujipetik_model->get_analisa_by_id($id);
+				$this->load->view( $this->url . '/show_detil_analisa',$data);
+			break;
+            case 'showdataSummary':
+                $no_pack = $param_data[1];
+                $data['summary'] = $this->ujipetik_model->summary_uji_perik_per_shift($no_pack, $date, $display = true);
+                $this->load->view( $this->url . '/show_summary_shift',$data);
+            break;
+        }
+
+    }
+
+	function simpan_analisa(){
+	   
+       $jenis = $this->input->post('jenis');
+               
+		$simpan = $this->ujipetik_model->simpan_analisa();
+        
+        switch ($jenis){
+            case '1kg':
+            case '50kg':
+                $msg = $simpan;
+            break;
+            case '20kg': 
+                $msg = "OK";
+            break;
+        }
+        
+		if ($simpan){ echo $msg; };
+	}
+    
+    function delete_analisa(){
+        $delete = $this->ujipetik_model->delete_analisa();
+		if ($delete){ echo "OK"; };
+    }
+    
+    function get_device_setting(){
+        
+        $jenis = $this->input->post('jenis');
+        $ip = $this->input->post('ip');
+        //print_r(get_client_ip());
+        
+        switch($jenis){
+            
+            case '20kg':
+                $id_alat = 'A21';
+            break;
+            case '1kg':
+                $id_alat = 'A22';
+            break;
+            case '50kg':
+                $id_alat = 'A23';
+            break;
+        }
+        $data = $this->devices_model->get_devices_by_id_alat($id_alat);
+        //$data =  $this->devices_model->get_devices_by_ip($ip);
+        
+        if ($data){
+            echo json_encode($data);
+        }else{
+            return false;
+        }
+    }
+
+  }

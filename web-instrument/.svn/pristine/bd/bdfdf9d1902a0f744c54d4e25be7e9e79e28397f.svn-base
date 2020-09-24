@@ -1,0 +1,126 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Reportujipetikgula_controller extends CI_Controller {
+	   
+    private $cat;
+    private $menu;
+    private $submenu;
+    private $module;
+    private $url;
+
+    function __construct()
+    {
+        parent :: __construct();
+
+        $this->cat = $this->input->post('cat');
+        $this->menu = $this->input->post('menu');
+        $this->submenu = $this->input->post('submenu');
+        $this->module = $this->input->post('module');
+        $this->url = "$this->menu/$this->submenu/$this->module";
+
+        $this->load->model('user_model');
+        $this->load->model('hakakses_model');
+        $this->load->model('ujipetik_model');
+
+    }
+    
+    function do_action()
+    {
+
+        $data['cat'] = $this->cat;
+        $data['submenu_title'] = $this->input->post('submenu_title');
+        $data['module_title'] = $this->input->post('module_title');
+        $data['module_id'] = $this->input->post('module_id');
+
+        $action = $this->input->post('action');
+    	$param_data = $this->input->post('data');
+    
+    	$admin = $this->session->userdata('is_admin');
+    	$id_user = $this->session->userdata('id_user');
+    	$permit = $this->hakakses_model->user_permission (  $id_user, $data['module_id'] , $admin );
+    	//print_r($permit);
+    	$data['is_create'] = $permit['is_create'];
+    	$data['is_update'] = $permit['is_update'];
+    	$data['is_delete'] = $permit['is_delete'];
+        
+        $data['url'] = $this->url;
+
+        cek_sesi();
+
+        switch($action){
+            case 'showdata':
+              $this->load->view( $this->url . '/form_cetak',$data);
+              break;
+        }
+
+    }
+    
+    function add_session_print(){
+        
+        $jenis_laporan = $this->input->post('jenis_laporan');
+        $jenis_timbang = $this->input->post('jenis_timbang');
+        $tipe_laporan = $this->input->post('tipe_laporan');
+        $url = $this->input->post('url');
+        $data = $this->input->post('data');
+        
+        $tanggal_awal = $data[0];
+        $tanggal_akhir = $data[1];
+        
+        $array_items = array('view_url','jenis_laporan','jenis_timbang','tanggal_awal','tanggal_akhir','tipe_laporan');
+        
+        $this->session->unset_userdata($array_items);
+        
+        $this->session->set_userdata(array(
+                                        'view_url' => $url,
+                                        'jenis_laporan' => $jenis_laporan, 
+                                        'jenis_timbang' => $jenis_timbang,
+                                        'tanggal_awal' => $tanggal_awal,
+                                        'tanggal_akhir' => $tanggal_akhir,
+                                        'tipe_laporan' => $tipe_laporan
+                                     ));
+    }
+    
+    function export_pdf(){
+        
+        $jenis_laporan = $this->session->userdata('jenis_laporan');
+        $jenis_timbang = $this->session->userdata('jenis_timbang');
+        $url = $this->session->userdata('view_url');
+        $tanggal_awal = $this->session->userdata('tanggal_awal');
+        $tanggal_akhir = $this->session->userdata('tanggal_akhir');
+        $tipe_laporan = $this->session->userdata('tipe_laporan');
+         
+        $var['jenis_timbang'] = $jenis_timbang;
+        $var['tanggal_awal'] = $tanggal_awal;
+        $var['tanggal_akhir'] = $tanggal_akhir;
+        $var['jenis_laporan'] = $jenis_laporan;
+        
+        $this->load->vars( $var );
+        
+        switch ($tipe_laporan){
+            case '1': //Detail Sugar Packing Report
+                switch ($jenis_laporan){
+                    case 'daily':
+                        $data['ujipetik'] = $this->ujipetik_model->show_analisa($jenis_timbang,$tanggal_awal);//model sebelumnya GMP_RIZKI  
+                    break;
+                    case 'periode':
+                        $data['ujipetik'] = $this->ujipetik_model->report_periode_ujipetik($jenis_timbang,$tanggal_awal,$tanggal_akhir);//model sebelumnya GMP_RIZKI 
+                    break;
+                }
+                $this->load->view( $url. '/cetak_repot_ujipetik_daily',$data);
+            break;
+            case '2': //Summary Sugar Packing Report
+                $data['ujipetik'] = $this->ujipetik_model->report_summary_ujipetik($jenis_timbang,$tanggal_awal,$tanggal_akhir,$jenis_laporan);
+                $this->load->view( $url. '/cetak_repot_summary_ujipetik',$data);
+            break;
+            case '3': //Error Sugar Packing Report
+                $data['ujipetik'] = $this->ujipetik_model->report_error_ujipetik($jenis_timbang,$tanggal_awal,$tanggal_akhir,$jenis_laporan);
+                $this->load->view( $url. '/cetak_repot_error_ujipetik',$data);
+            break;
+            
+        }
+        
+
+        
+    }
+    
+}

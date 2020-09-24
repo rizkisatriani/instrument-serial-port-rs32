@@ -1,0 +1,156 @@
+<?php
+
+class Ujipetik_model extends CI_Model
+{
+    function __construct()
+    {
+        parent:: __construct();
+
+    }
+
+    function show_analisa( $no_pack, $date ){
+    
+        $moduleid = $this->input->post('module_id');
+        
+        $date_saiki = date_create($date);
+        date_add($date_saiki, date_interval_create_from_date_string('1 days'));
+        $date_sesok =  date_format($date_saiki, 'Y-m-d');
+    
+        $this->db->select('uji_petik_gula.id,uji_petik_gula.tanggal,uji_petik_gula.nilai_uji,
+                           uji_petik_gula.nilai_uji as hasil,
+                           uji_petik_gula.is_data,create.namalengkap as createby, uji_petik_gula.wkt_input');
+        $this->db->from('uji_petik_gula');
+        $this->db->join('users as create', 'create.id = uji_petik_gula.id_user', 'inner');
+        $this->db->where('uji_petik_gula.id_parameter', "$no_pack");
+        $this->db->where('uji_petik_gula.is_data', "1");
+        $this->db->where('wkt_input >=', "$date 06:00:00");
+        $this->db->where('wkt_input <=', "$date_sesok 05:59:59");
+        $this->db->order_by('uji_petik_gula.id', 'DESC');
+    
+        $query = $this->db->get();
+    
+        return $query->result();
+    }
+
+
+    function simpan_analisa($paramArray = false){
+
+        if ($this->input->post('status') == '2'){
+          $status = 1;
+          $this->update_status_analisa_sebelumnya();
+        }else{
+          $status = $this->input->post('status');
+        }
+    
+        $data = array(
+          'tanggal' => date("Y-m-d"),
+          //'id_jam' => $this->input->post('jam_analisa'),
+          'nilai_uji' => $this->input->post('hasil'),
+          'id_user' => $this->session->userdata('id_user'),
+          'id_parameter' => $this->input->post('jenis'),
+          'is_data' => 1
+        );
+    
+        $insert = $this->db->insert('uji_petik_gula', $data);
+    
+        if ( $insert ){ return true; }else{ return false; }
+
+    }
+
+
+    function get_analisa_by_id($id){
+
+		$this->db->select('*');
+		$this->db->where('id', $id);
+
+		$query = $this->db->get('uji_petik_gula',1);
+
+		if ( $query->num_rows() == 1 )
+		{
+			return $query->row_array();
+		}
+		else
+		{
+			return false;
+		}
+	}
+    
+    function get_param_uji($no_pack){
+        
+        $this->db->select('*');
+		$this->db->where('no_pack', $no_pack);
+
+		$query = $this->db->get('uji_petik_parameter',1);
+
+		if ( $query->num_rows() == 1 )
+		{
+			return $query->row_array();
+		}
+		else
+		{
+			return false;
+		}
+    }
+    
+    function summary_uji_perik_per_shift($no_pack, $date){
+        
+        $date_saiki = date_create($date);
+        date_add($date_saiki, date_interval_create_from_date_string('1 days'));
+        $date_sesok =  date_format($date_saiki, 'Y-m-d');
+        
+        $query = $this->db->query("SELECT petik.shift, petik.min, petik.max, ROUND(petik.avg,2) as avg, petik.sum,petik.under, petik.overmax,no_pack 
+                                    FROM (
+                                    	SELECT '1' AS shift, MIN(nilai_uji) AS MIN, MAX(nilai_uji) AS MAX,AVG(nilai_uji) AS AVG,SUM(nilai_uji) AS SUM,param.`no_pack`,
+                                    	COUNT( IF(uji.`nilai_uji` < param.min,TRUE,NULL) ) AS under, COUNT( IF(uji.`nilai_uji` > param.max,TRUE,NULL) ) AS overmax
+                                    	FROM uji_petik_gula AS uji
+                                    	INNER JOIN uji_petik_parameter AS param
+                                    	ON param.`no_pack` = uji.id_parameter
+                                    	WHERE uji.is_data = '1' AND wkt_input BETWEEN '$date 06:00:00' AND '$date 13:59:59'
+                                        GROUP BY uji.id_parameter
+                                    	UNION ALL
+                                    	SELECT '2' AS shift, MIN(nilai_uji) AS MIN, MAX(nilai_uji) AS MAX,AVG(nilai_uji) AS AVG,SUM(nilai_uji) AS SUM,param.`no_pack`,
+                                    	COUNT( IF(uji.`nilai_uji` < param.min,TRUE,NULL) ) AS under, COUNT( IF(uji.`nilai_uji` > param.max,TRUE,NULL) ) AS overmax
+                                    	FROM uji_petik_gula AS uji
+                                    	INNER JOIN uji_petik_parameter AS param
+                                    	ON param.`no_pack` = uji.id_parameter
+                                    	WHERE uji.is_data = '1' AND  wkt_input BETWEEN '$date 14:00:00' AND '$date 21:59:59'
+                                        GROUP BY uji.id_parameter
+                                    	UNION ALL
+                                    	SELECT '3' AS shift, MIN(nilai_uji) AS MIN, MAX(nilai_uji) AS MAX,AVG(nilai_uji) AS AVG,SUM(nilai_uji) AS SUM,param.`no_pack`,
+                                    	COUNT( IF(uji.`nilai_uji` < param.min,TRUE,NULL) ) AS under, COUNT( IF(uji.`nilai_uji` > param.max,TRUE,NULL) ) AS overmax
+                                    	FROM uji_petik_gula AS uji
+                                    	INNER JOIN uji_petik_parameter AS param
+                                    	ON param.`no_pack` = uji.id_parameter
+                                    	WHERE uji.is_data = '1' AND wkt_input BETWEEN '$date 22:00:00' AND '$date_sesok 05:59:59'
+                                        GROUP BY uji.id_parameter
+                                    ) AS petik
+                                WHERE no_pack = '$no_pack' ");
+                                
+                        
+        return $query->result();
+    }
+    
+    function delete_analisa(){
+        
+        $jenis = $this->input->post('jenis');
+        $id = $this->input->post('id');
+        $reason = $this->input->post('reason');
+        
+        $this->db->set('is_data', '2');
+        $this->db->set('id_user_delete', $this->session->userdata('id_user'));
+        $this->db->set('reason_delete', $reason);
+        
+        $this->db->where('id', $id);
+        
+        $update = $this->db->update('uji_petik_gula');
+        
+        if ($update){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+
+}
+ ?>

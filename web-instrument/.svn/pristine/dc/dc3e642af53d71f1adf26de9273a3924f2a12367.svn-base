@@ -1,0 +1,479 @@
+<?php
+//print_r($this->session->userdata());
+//print_r(opsi_db('jam_analisa'));
+//print_r(opsi_db('material_analisa'));
+$jam = "<option value='0' >--Pilih Jam--</option>";
+$material = "<option value='0' >--Pilih Material--</option>";
+$parameter = "<option value='0' >--Pilih Parameter--</option>";
+$no = 1;
+foreach ( opsi_db('material_analisa','','','M039') as $key=>$val ){
+    if ($no == 1){$select='selected';}else{$select = '';}
+    $material .= "<option value='$key' $select>$val</option>";
+    $no++;
+}
+$select = '';
+foreach ( opsi_db('jam_analisa') as $key=>$val ){
+    if ($val=='Shift I'){$select='selected';}else{$select='';}
+    if ($val == 'Shift I' or $val=='Shift II' or $val=='Shift III'){
+      $jam .= "<option value='$key' $select>$val</option>";
+    }
+
+}
+$select = '';
+foreach (opsi_db('parameter_analisa','','','') as $key=>$val ) {
+    switch ($key) {
+      case 'P061': case 'P062': case 'P063': case 'P064': case 'P065': case 'P066':
+      case 'P067': case 'P068': case 'P069': case 'P070': case 'P071': case 'P072':
+      case 'P073': case 'P018': case 'P019': case 'P074': case 'P020':
+          $parameter .= "<option value='$key' selected='selected'>$val</option>";
+      break;
+    }
+}
+
+$nama = $this->session->userdata('namalengkap');
+$tanggal = date("d-m-Y");
+
+?>
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="cell-md-11 p-4">
+                    <form name="analisa" id="analisa">
+                        <input type="hidden" name="id_modul" id='id_modulinput' >
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Nama Analis</label>
+                             <div class="cell-sm-5">
+                                 <input type="text" name="namalengkap" value="<?=$nama?>" disabled readonly>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tanggal</label>
+                             <div class="cell-sm-5">
+                                 <input type="text" name="tanggal" value ="<?=$tanggal?>" disabled readonly>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Material</label>
+                             <div class="cell-sm-5">
+                               <select data-role="select" id='material_analisa' name='material_analisa' >
+                                 <?=$material?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Parameter</label>
+                             <div class="cell-sm-11">
+                               <select data-role="select" id='parameter' name='parameter[]' multiple>
+                                 <?=$parameter?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Jam</label>
+                             <div class="cell-sm-5">
+                               <select data-role="select" id='jam_analisa' name='jam_analisa' >
+                                 <?=$jam?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                           <label class="cell-sm-1">Status</label>
+                           <div class="cell-sm-5">
+                               <label class="radio">
+                                  <input name="status" id='status1' type="radio" data-role="radio" data-caption="Option one" checked="true" class="" data-role-radio="true" value="1">
+                                  <span class="check"></span><span class="caption">New</span>
+                               </label>
+                               <label class="radio">
+                                 <input name="status" id='status2' type="radio" data-role="radio" data-caption="Option two" class="" data-role-radio="true" value="2">
+                                 <span class="check"></span><span class="caption">Ricek</span>
+                               </label>
+                               <label class="radio">
+                                 <input name="status" id='status3' type="radio" data-role="radio" data-caption="Option two" class="" data-role-radio="true" value="3">
+                                 <span class="check"></span><span class="caption">Test</span>
+                               </label>
+                           </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Berat Sample</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='sample' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  oninput="hitung_hasil()"
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">G Size</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='g_size' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">MA</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='ma' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">SD</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='sd' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">SV</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='cv' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='0'
+                                  />
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="cell">
+                                 <!--<button type="submit" class="button primary">Sign in</button>-->
+                                 <!--<button type="button" class="button secondary" title="get data from ph A" onclick="javascript:get_data_api('hasil','2')"><span class="mif-download"></span> Get data from <?=$module_title?></button>-->
+                                 <button type="button" class="button button alert" title="reset this form" onclick="javascript:resetform()"> Reset</button>
+                                 <button type="submit" class="button button primary" title="Save data"><span class="mif-floppy-disk"></span> Simpan</button>
+                                 <code id="ApiResponse"></code>
+                             </div>
+                         </div>
+                     </form>
+                  </div>
+              </div>
+              <div class="panel-title">
+                  <span class="caption"><?=$module_title?></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<script>
+
+$(document).ready(function(){
+
+  $("#id_modulinput").val(module_id);
+  $("#hasil").val(0);
+
+  $("#analisa").submit(function(){
+    //console.log('oke')
+    if( $("#jam_analisa").val() == '0' ){
+      msg = "Jam Analisa Harus di Pilih";
+      custom_alert_notif(msg);
+      return false;
+    }
+
+    if( $("#parameter").val() == '0'){
+      msg = "paramter Analisa belum di Pilih";
+      custom_alert_notif(msg);
+      return false;
+    }
+
+    if( $('#material_analisa').val() == '0' ){
+      msg = "Material Harus di Pilih";
+      custom_alert_notif(msg);
+      return false;
+    }
+
+    if( $("#hasil").val() == '0' ){
+      msg = "Hasil Tidak Boleh 0";
+      custom_alert_notif(msg);
+      return false;
+    }
+
+    $.ajax({
+ 				type: 'POST',
+ 				data: $(this).serialize(),
+ 				cache: false,
+ 				url: baseURL + menu + '/' + submenu + '/' + controller + '/simpan_analisa',
+ 				success: function(result){
+ 					var msg = $.trim(result);
+ 					if (msg == 'OK') {
+            //resetform();
+            location.reload();
+ 					}
+ 				}
+ 			});
+
+    return false;
+  });
+
+
+
+});
+
+function resetform(){
+  //console.log('oke')
+  //$(".input").val(0);
+  $(".input").val(0);
+}
+
+function hitung_hasil(){
+
+  var brt_brutto_f6;
+  var tarra_f1 = parseFloat( $("#tarra_f1").val() );
+  var tarra_f2 = parseFloat( $("#tarra_f2").val() );
+  var tarra_f3 = parseFloat( $("#tarra_f3").val() );
+  var tarra_f4 = parseFloat( $("#tarra_f4").val() );
+  var tarra_f5 = parseFloat( $("#tarra_f5").val() );
+  var tarra_f6 = parseFloat( $("#tarra_f6").val() );
+  var brutto_f1 = parseFloat( $("#brutto_f1").val() );
+  var brutto_f2 = parseFloat( $("#brutto_f2").val() );
+  var brutto_f3 = parseFloat( $("#brutto_f3").val() );
+  var brutto_f4 = parseFloat( $("#brutto_f4").val() );
+  var brutto_f5 = parseFloat( $("#brutto_f5").val() );
+  var brt_tarra_f1sd6 = tarra_f1 + tarra_f2 + tarra_f3 + tarra_f4 + tarra_f5 + tarra_f6;
+  var brt_brutto_f1sd5 = brutto_f1 + brutto_f2 + brutto_f3 + brutto_f4 + brutto_f5;
+  var sample = parseFloat( $("#sample").val() );
+  var brutto_f6 = sample + brt_tarra_f1sd6 - brt_brutto_f1sd5;
+  $("#brutto_f6").val(brutto_f6);
+
+  var net_f1 = brutto_f1 - tarra_f1;
+  var net_f2 = brutto_f2 - tarra_f2;
+  var net_f3 = brutto_f3- tarra_f3;
+  var net_f4 = brutto_f4 - tarra_f4;
+  var net_f5 = brutto_f5 - tarra_f5;
+  var net_f1sd5 = net_f2 + net_f3 + net_f4 + net_f5;
+  var net_f6 = sample - net_f1sd5;
+
+  $("#net_f1").val(net_f1);
+  $("#net_f2").val(net_f2);
+  $("#net_f3").val(net_f3);
+  $("#net_f4").val(net_f4);
+  $("#net_f5").val(net_f5);
+  $("#net_f6").val(net_f6);
+
+  var a = sample;
+  var b = net_f1;
+  var c = net_f2;
+  var d = net_f3;
+  var e = net_f4;
+  var f = net_f5;
+  var g = net_f6;
+
+  var g_size = 1000 / ((b/a*4.8) + (c/a*7.1) + (d/a*10) + (e/a*14.1) + (f/a*24) + (g/a*48));
+  var ma = (b/a*1.85) + (c/a*1.44) + (d/a*1.015) + (e/a*0.725) + (f/a*0.45) + (g/a*0.275);
+  var sd = (((ma-1.85)*b) + ((ma-1.44)*c) + ((ma-1.015)*d) + ((ma-0.725)*e) + ((ma-0.45)*f) + ((ma-0.275)*g)) / a;
+  var cv = sd/ma *100;
+
+  $("#g_size").val(g_size);
+  $("#ma").val(ma);
+  $("#sd").val(sd);
+  $("#cv").val(cv);
+}
+
+
+
+</script>

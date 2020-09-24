@@ -1,0 +1,219 @@
+<?php
+ 
+    $table = "";
+    $table2 = "";
+    $target ="";
+    $no=0;
+    foreach($material as $val){
+        $nama_material = $val->name;
+        $id_material = $val->id_material;
+  
+        $P001_id ='';
+        $P001=''; 
+        $P002_id ='';
+        $P002=''; 
+        $P025_id ='';
+        $P025=''; 
+        $P027_id ='';
+        $P027='';
+        $P092_id ='';
+        $P092='';
+        $P093_id ='';
+        $P093='';
+        $P094_id ='';
+        $P094='';
+        $P095_id ='';
+        $P095='';
+        $P096_id ='';
+        $P096='';
+        $P097_id ='';
+        $P097='';
+        $P098_id ='';
+        $P098='';
+        $P099_id ='';
+        $P099='';
+        $P100_id ='';
+        $P100='';
+
+
+        foreach($analisa as $val_analisa){
+            $material_analisa = $val_analisa->id_material; 
+
+            if($id_material == $material_analisa){
+                
+                switch($val_analisa->id_parameter){  
+                case 'P001':
+                $P001_id = $val_analisa->id;
+                $P001= $val_analisa->hasil;
+                break;
+                case 'P002':
+                $P002_id = $val_analisa->id;
+                $P002= $val_analisa->hasil;
+                break;
+                case 'P025':
+                $P025_id = $val_analisa->id;
+                $P025= $val_analisa->hasil;
+                break;
+                case 'P027':
+                $P027_id = $val_analisa->id;
+                $P027= $val_analisa->hasil;
+                break;
+                case 'P092':
+                $P092_id = $val_analisa->id;
+                $P092= $val_analisa->hasil;
+                break;
+                case 'P093':
+                $P093_id = $val_analisa->id;
+                $P093= $val_analisa->hasil;
+                break;
+                case 'P094':
+                $P094_id = $val_analisa->id;
+                $P094= $val_analisa->hasil;
+                break;
+                case 'P095':
+                $P095_id = $val_analisa->id;
+                $P095= $val_analisa->hasil;
+                break;
+                case 'P096':
+                $P096_id = $val_analisa->id;
+                $P096= $val_analisa->hasil;
+                break;
+                case 'P097':
+                $P097_id = $val_analisa->id;
+                $P097= $val_analisa->hasil;
+                break;
+                case 'P098':
+                $P098_id = $val_analisa->id;
+                $P098= $val_analisa->hasil;
+                break;
+                case 'P099':
+                $P099_id = $val_analisa->id;
+                $P099= $val_analisa->hasil;
+                break;
+                case 'P100':
+                $P100_id = $val_analisa->id;
+                $P100= $val_analisa->hasil;
+                break;
+                     
+                }  
+            }
+        }
+
+        if($P092!=0&&$P093!=0) { 
+         $pty_c1=round(( $P092 /$P093 )*100,2);
+         }else{
+            $pty_c1=0;
+         }
+         if($P094!=0&&$P095!=0){
+         $pty_finmol=round(( $P094 / $P095 )*100,2); 
+         }else{
+            $pty_finmol=0;
+         }
+            if($P001!=0&&$P002!=0){
+         $pty_material=round(( $P001 / $P002 )*100,2); 
+         }else{
+            $pty_material=0;
+         }
+         if ($id_material=='M019' || $id_material=='M029' || $id_material=='M180') {
+            $table2 .= "<tr>
+                    <td>$nama_material</td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P001','$P001','$nama_material','Ph')\">$P001</a></td> 
+                    
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P002','$P002','$nama_material','Ph')\">$P002</a></td>
+
+                    <td style='text-align:center;color:#c0392b;'>$pty_material</td>
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P025','$P025','$nama_material','Ph')\">$P025</a></td>
+
+ 
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P027','$P027','$nama_material','Ph')\">$P027</a></td>
+
+                    
+ 
+                 </tr>";
+         }else{ 
+           $table .= "<tr>
+                    <td>$nama_material</td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P092','$P092','$nama_material','Ph')\">$P092</a></td> 
+                    
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P093','$P093','$nama_material','Ph')\">$P093</a></td>
+
+                    <td style='text-align:center;color:#c0392b;'>$pty_c1</td>
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P094','$P094','$nama_material','Ph')\">$P094</a></td>
+
+ 
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P095','$P095','$nama_material','Ph')\">$P095</a></td>
+
+                    <td style='text-align:center; color:#c0392b;'>$pty_finmol</td>
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P096','$P096','$nama_material','Ph')\">$P096</a></td>
+
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P097','$P097','$nama_material','Ph')\">$P097</a></td>
+
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P098','$P098','$nama_material','Ph')\">$P098</a></td>
+
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P099','$P099','$nama_material','Ph')\">$P099</a></td>
+
+
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P100','$P100','$nama_material','Ph')\">$P100</a></td>
+ 
+                 </tr>";
+                }
+       
+    }
+?>
+<table class="table striped table-border cell-border row-border cell-hover subcompact">
+    <thead >  
+        <tr class="bg-orange" > 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Material</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Brix</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pol</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pty</th>  
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Visc</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Temp</th>  
+        </tr>
+    </thead>
+    <tbody>
+        <?=$table2?>
+    </tbody>
+</table> 
+</br></br>
+<table class="table striped table-border cell-border row-border cell-hover subcompact">
+    <thead >
+        <tr class="bg-orange" >
+            <th width='15%' rowspan="3" style='text-align:center; vertical-align: middle;' >Material</th>
+            <th width='5%' colspan="6" style='text-align:center; vertical-align: middle;' >C-1 SUGAR & FINAL MOLASSES</th>
+            <th width='10%' colspan="6"style='text-align:center; vertical-align: middle;'>DATA PARAMETER OPERASIONAL</th> 
+        </tr>
+        <tr class="bg-orange" > 
+            <th width='5%' colspan="3" style='text-align:center; vertical-align: middle;' >C-1 SUGAR</th>
+            <th  width='5%' colspan="3"style='text-align:center; vertical-align: middle;'>FINAL MOLASSES</th> 
+            <th  width='5%' rowspan="2"style='text-align:center; vertical-align: middle;'>Temp Fmol oC</th> 
+            <th  width='5%' rowspan="2"style='text-align:center; vertical-align: middle;'>Vol FM lpm</th> 
+            <th  width='5%' rowspan="2"style='text-align:center; vertical-align: middle;'>Load Amp</th> 
+            <th  width='5%' rowspan="2"style='text-align:center; vertical-align: middle;'>Dilt Wtr gmp/lpm</th> 
+            <th  width='5%' rowspan="2"style='text-align:center; vertical-align: middle;'>Temp Dilt. Wtr. oC</th> 
+        </tr>
+        <tr class="bg-orange" > 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Brix</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pol</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pty</th>  
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Brix</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pol</th> 
+            <th width='5%' style='text-align:center; vertical-align: middle;' >Pty</th>  
+        </tr>
+    </thead>
+    <tbody>
+        <?=$table?>
+    </tbody>
+</table> 
+<div class="row border-top bd-gray">
+    <div class="cell-sm-full cell-md-one-third cell-lg-3"></div>
+    <div class="cell-sm-full cell-md-two-third cell-lg-3"><button class="button primary" onclick="simpanVerifikasi('<?=$tgl?>','<?=$jam?>')"><span class="mif-done_all"></span> Simpan</button></div>
+    <div class="cell-sm-full cell-md-half cell-lg-3"><button class="button alert" onclick="batalVerifikasi('<?=$tgl?>','<?=$jam?>')"><span class="mif-cross"></span> Batal</button></div>
+    <div class="cell-sm-full cell-md-half cell-lg-3"></div>
+</div>

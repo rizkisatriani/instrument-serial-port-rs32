@@ -1,0 +1,125 @@
+<?php
+
+$table = "";
+$targetBrix = "";
+$targetPty = "";
+
+foreach($material as $val){
+    
+    $nama_material = $val->name;
+    $id_material = $val->id_material;
+    
+    switch($val->id_material){
+        case 'M015': 
+        case 'M016': $targetBrix = "94-95"; $targetPty = "71-73"; break;
+        case 'M017': 
+        case 'M018': $targetBrix = "96-97"; $targetPty = "57-58"; break;
+        case 'M020': $targetBrix = "80-81"; $targetPty = "93-94"; break;
+        case 'M021': $targetBrix = "90-91"; $targetPty = "91-92"; break;
+        case 'M022': $targetBrix = "60-65"; $targetPty = "92-94"; break;
+        case 'M023': $targetBrix = "91-92"; $targetPty = "74-75"; break;
+        case 'M024': $targetBrix = "80-82"; $targetPty = "70-73"; break;
+        case 'M025': $targetBrix = "78-79"; $targetPty = "83-84"; break;
+        case 'M026': $targetBrix = "84-85"; $targetPty = "52-53"; break;
+        case 'M027': $targetBrix = "80-82"; $targetPty = "56-58"; break;
+        case 'M028': $targetBrix = "82-84"; $targetPty = "54-56"; break;
+        case 'M029': $targetBrix = "87-89"; $targetPty = "32-33"; break;
+        default: $targetBrix = ""; $targetPty = ""; break;
+    }
+    
+    $P001_id="";$P002_id="";$P013_id="";
+    $P001="";$P002="";$P013="";
+    
+    foreach($analisa as $val_analisa){
+        
+        $material_analisa = $val_analisa->id_material;
+            
+        if($id_material == $material_analisa){
+            
+            switch($val_analisa->id_parameter){
+                
+                case 'P001':
+                    $P001_id = $val_analisa->id;
+                    $P001 = $val_analisa->hasil;
+                break;
+                case 'P002':
+                    $P002_id = $val_analisa->id;
+                    $P002 = $val_analisa->hasil;
+                break;
+                case 'P013':
+                    $P013_id = $val_analisa->id;
+                    $P013 = $val_analisa->hasil;
+                break;
+            }
+                
+                
+        }
+    }
+    
+    if( $P001 !="" or $P001!= 0 ){
+        $PTY = $P002 / $P001 * 100; 
+    }else{
+        $PTY = "";
+    }
+    
+    
+    $table .= "<tr>
+                    <td>$nama_material</td>
+            		<td style='text-align:center;'><a class='button-custom' >$P001</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P002</a></td>
+            		<td style='text-align:center;' class='fg-crimson'>$PTY</td>
+            		<td style='text-align:center;'><a class='button-custom'>$P013</a></td>
+            		<td style='text-align:center;' class='fg-emerald'>$targetBrix</td>
+            		<td style='text-align:center;' class='fg-emerald'>$targetPty</td>
+                 </tr>";
+}
+
+
+?>
+
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="cell p-1 border-bottom bd-gray">
+                    <div class="d-flex flex-wrap flex-nowrap-lg flex-align-center flex-justify-center flex-justify-start-lg mb-2">
+                        <div class="w-50 mb-2 mb-0-lg" >
+                          <input type="text" data-role="input" data-prepend="Tanggal" value="<?=$header['tanggal']?>" readonly>
+                        </div>
+                        <div class="ml-2 w-50 mr-2 my-rows-wrapper">
+                          <input type="text" data-role="input" data-prepend="Jam Analisa" value="<?=$header['id_jam']?>" readonly>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="cell p-1" id='gridedit'>
+                   
+                    <table class="table striped table-border cell-border row-border cell-hover subcompact">
+                        <thead >
+                            <tr class="bg-orange" >
+                                <th width='10%' style='text-align:center;' >Material</th>
+                                <th width='5%' style='text-align:center;'>Brix(%)</th>
+                                <th width='5%' style='text-align:center;'>Pol(%)</th>
+                        		<th width='5%' style='text-align:center;'>Pty(%)</th>
+                        		<th width='5%' style='text-align:center;'>Color (UI)</th>
+                                <th width='5%' style='text-align:center;'>Target Brix</th>
+                                <th width='5%' style='text-align:center;'>Targert Purity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?=$table?>
+                        </tbody>
+                    </table>
+                                      
+                  </div>                 
+              </div>
+              <div class="panel-title">
+                  <span class="caption"><?=$module_title?> : <b><?=$header['nomor']?></b></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

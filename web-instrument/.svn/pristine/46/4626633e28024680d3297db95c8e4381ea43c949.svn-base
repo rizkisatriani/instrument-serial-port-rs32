@@ -1,0 +1,92 @@
+
+function get_data_api(respon,id_devices){
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+  var actifity = Metro.activity.open();
+  //
+  $.ajax({
+    type:'POST', data :{ 'id_devices':id_devices }, chace: false,
+    url : baseURL + 'site/get_api',
+		complete: function()
+		{
+			Metro.activity.close(actifity);
+		},
+    success: function(resp)
+    {
+
+      if ( resp.search("403") > 0 || resp.search("refused") > 0 || resp.search("Timed out") > 0 ){
+        if (resp.search("refused") > 0){
+          document.getElementById("ApiResponse").innerHTML = "<code class='bg-yellow' class='messageResponse'>"+resp+"</code>";
+        }else{
+          document.getElementById("ApiResponse").innerHTML = "<code class='bg-red fg-white' class='messageResponse'>"+resp+"</code>";
+        }
+        $('#'+respon).val(0);
+      }else{
+        $('#'+respon).val(resp);
+        document.getElementById("ApiResponse").innerHTML = "<code class='bg-green fg-white' class='messageResponse'>200 OK</code>";
+      }
+
+    },
+    error: function(resp){
+
+        var responseText = resp['responseText'];
+        var respon = responseText.split(":");
+        var hasil = respon[1].search("403");
+
+        if (hasil > 0){
+            document.getElementById("ApiResponse").innerHTML = "<code class='bg-red fg-white' class='messageResponse'>"+respon[1]+"</code>";
+        }else{
+            document.getElementById("ApiResponse").innerHTML = "<code class='bg-yellow' class='messageResponse'>No response</code>";
+        }
+    }
+  });
+  //console.log(id_devices);
+}
+
+function post_data_api(respon,id_devices){
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+
+  var actifity = Metro.activity.open({
+        type: 'metro',
+        text: '<div class=\'mt-2 text-small\'>Sedang Mencoba Koneksi Ke Devices</div>'
+        //overlayClickClose: true
+    });
+  //
+  $.ajax({
+    type:'POST', data :{ 'id_devices':id_devices }, chace: false,
+    url : baseURL + 'site/post_api',
+    complete: function()
+		{
+			Metro.activity.close(actifity);
+		},
+    success: function(resp)
+    {
+      if ( resp.search("403") > 0 || resp.search("refused") > 0 || resp.search("Timed out") > 0 || resp.search('Error') > 0 ){
+
+        var notify = Metro.notify;
+        notify.create(resp+"<br> Click me to close", "Alert", {
+            keepOpen: true,
+            cls: "alert"
+        });
+
+      }else{
+        document.getElementById(respon).disabled = false;
+      }
+
+      //console.log(resp);
+    }
+  });
+}

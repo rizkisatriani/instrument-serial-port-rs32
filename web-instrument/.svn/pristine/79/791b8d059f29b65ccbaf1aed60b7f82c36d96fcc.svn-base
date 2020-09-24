@@ -1,0 +1,287 @@
+<?php
+$nama = $this->session->userdata('namalengkap');
+$tanggal = date("d-m-Y");
+
+switch ( $jenis ){
+  case '20kg':
+    $title = "SUGAR PACKING WEIGH 20 Kg";
+  break;
+  case '1kg':
+    $title = "SUGAR PACKING WEIGH 1 Kg";
+  break;
+  case '50kg':
+    $title = "SUGAR PACKING WEIGH 50 Kg";
+  break;
+}
+
+$no_pack = $param['no_pack'];
+$min_save = $param['min_save'];
+$max_save = $param['max_save'];
+$min = $param['min'];
+$max = $param['max'];
+?>
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="grid">
+                    <div class="row">
+                        <div class="stub" style="width: 60%;">
+                          <div></div>
+                          <div class="row">
+                            <div class="cell">
+                              <div class="row">
+                                  <div class="cell border-top border-left border-right bd-black bg-black">
+                                    <div class="place-left logoweigh"><p><b>WEIGHT</b></p></div>
+                                    <div class="place-right logoweigh"><p><b>Kgs</b></p></div>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="cell border-bottom border-left border-right bd-black bg-black">
+                                    <div id='divDisplayWeigh'style="width: 100%;"><span id="displayweigh"></span></div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="cell">
+                              <!--
+                              <div class="clear">
+                                <button class="button place-left">Button floated left</button>
+                                <div class="cell fg-yellow place-right">Kgs</div>
+                              </div>-->
+                              <div class="row border-bottom bd-black">
+                                  <div class="cell">
+                                    <div>
+                                      <button class="button success large place-left" id='btnStart' onclick="PlayStopButton(this)"><span class="mif-play"></span> START</button>
+                                      <button class="button alert large" id='btnStop' onclick="PlayStopButton(this)" ><span class="mif-stop"></span> STOP</button>
+                                    </div>
+                                  </div>
+                                  <div class="cell">
+                                    <code id="ApiResponse"></code>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="cell">
+                                    <div id="showdataSummary"></div>
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="cell" style="width: 40%;" >
+                          <div data-role='panel' id="showdata"></div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <input type='hidden' id='tmp' name='tmp' value=0 >
+              <input type='hidden' id='jenis' name='jenis' value=<?=$jenis?>>
+              <input type='hidden' id='min_save' name='min_save' value=<?=$min_save?>>
+              <input type='hidden' id='max_save' name='max_save' value=<?=$max_save?>>
+              <input type='hidden' id='min' name='max_save' value=<?=$min?>>
+              <input type='hidden' id='max' name='max_save' value=<?=$max?>>
+              <div class="panel-title">
+                  <span class="caption"><?=$title?></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div id="alert_sound" ></div>
+</div>
+<script>
+
+    var timer;
+    var jenis = $('input[name="jenis"]').val();
+    
+    $(document).ready(function(){
+        //showdata();
+        show_data_no_loading();
+        show_summary_no_loading();
+        $('#btnStop').hide();
+        show_display_weigh("00.00");
+    });
+
+    function show_data_no_loading(){
+        
+        data = new Array();
+        data[1] = jenis;
+        ajax_do_action( 'showdata', 'showdata', data,'0');
+    }
+    
+    function show_summary_no_loading(){
+        data = new Array();
+        data[1] = jenis;
+        ajax_do_action( 'showdataSummary', 'showdataSummary', data,'0');
+    }
+    
+    function PlayStopButton(e){
+        switch (e.id) {
+            case 'btnStart':
+                $('#btnStart').hide();
+                $('#btnStop').show();
+                
+                var request = get_device_setting( jenis );
+                request.done(function (response, textStatus, jqXHR){
+                    timer = setInterval(function() { getAnalisaAlat( response ); },1000);
+                });
+            break;
+            case 'btnStop':
+                $('#btnStart').show();
+                $('#btnStop').hide();
+                clearInterval(timer);
+            break;
+        }
+    }
+    
+    function show_display_weigh( value ){
+        
+        if ( value ){
+            
+            var jenis = $("#jenis").val();
+            
+            switch (jenis){
+                
+                case '1kg':
+                    isi = value.replace('SUI', '')
+                    isi = parseFloat(isi);
+                    isi = isi.toFixed(2);
+                break;
+                case '20kg':
+                    isi = value.replace('ST', '')
+                    isi = parseFloat(isi);
+                    isi = isi.toFixed(2);
+                break;
+                case '50kg':
+                    isi = 0;
+                    isi = isi.toFixed(2);
+                break;
+                
+            }
+
+            var tmp = $("#tmp").val();
+            var min_save = $("#min_save").val();
+            var max_save = $("#max_save").val();
+            var min = parseFloat( $("#min").val() );
+            var max = parseFloat( $("#max").val() );
+            
+            min_save = parseFloat(min_save);
+            max_save = parseFloat(max_save);
+          
+            isi = parseFloat(isi);
+            if (!isi){
+                isi = 0;
+            }
+            isi = isi.toFixed(2);
+            $("#displayweigh").html(isi);
+            $("#tmp").val(isi);
+            
+            if (isi != 0 && (isi < min || isi > max) ){
+                get_sound_alert();
+            }
+            
+            if (isi < min_save){
+                return false;
+            }
+          
+            if (isi > max_save){
+                return false;
+            }
+
+            if ( parseFloat(tmp).toFixed(2) != isi){
+                
+                $.ajax({
+            		type: 'POST',
+            		data: {'jenis': jenis , 'hasil': isi},
+            		cache: false,
+            		url: baseURL + menu + '/' + submenu + '/' + controller + '/simpan_analisa',
+            		success: function(result){
+            			var msg = $.trim(result);
+            			if (msg == 'OK') {
+                            show_data_no_loading();
+                            show_summary_no_loading();
+            			}
+            		}
+                });
+            }
+            
+        }
+        
+    }
+    
+    function createanalisa(){
+        var jenis = $('input[name="JenisPack"]:checked').val();
+        data = new Array();
+        data[1] = jenis;
+        ajax_do_action( 'open_form_analisa', 'content',data);
+    }
+    
+    function HapusUjiPetik(id, pack){
+        
+        Metro.dialog.create({
+            title: "Hapus Uji Petik",
+            /*content: "<div><input type='text' id='reason' data-role='input' data-prepend='Reason : '></div>",*/
+            content: "<div><select data-role='select' id='reason' name='reason' data-prepend='Reason :'><option value=''></option>"+
+                                    "<option value='A Under'>A Under</option>"+
+                                    "<option value='A Over'>A Over</option>"+
+                                    "<option value='B Under'>B Under</option>"+
+                                    "<option value='B Over'>B Over</option>"+
+                                    "<option value='C Under'>C Under</option>"+
+                                    "<option value='C Over'>C Over</option>"+
+                                    "<option value='Timbang Terlalu Cepat'>Timbang Terlalu Cepat</option>"+
+                                    "<option value='Timbangan Error'>Timbangan Error</option>"+
+                                    "<option value='Jumlah Lebih'>Jumlah Lebih</option>"+
+                                    "<option value='Jumlah Kurang'>Jumlah Kurang</option>"+
+                                "</select></div>",
+            actions: [
+                {
+                    caption: "Delete",
+                    cls: "js-dialog-close warning",
+                    onclick: function(){
+                        YeNo = confirm("Apakah Anda Yakin untuk Delete data!");
+                        if (YeNo == true){
+                            reason = $("#reason").val();
+                            if (reason == ""){
+                                alert("Reason belum di isi");
+                            }else{
+                                
+                                $.ajax({
+                            		type: 'POST',
+                            		data: {'jenis': pack , 'id': id ,'reason':reason},
+                            		cache: false,
+                            		url: baseURL + menu + '/' + submenu + '/' + controller + '/delete_analisa',
+                            		success: function(result){
+                            			var msg = $.trim(result);
+                            			if (msg == 'OK') {
+                                            show_data_no_loading();
+                                            show_summary_no_loading();
+                            			}
+                            		}
+                                  }); 
+                            }
+
+                        }
+                    }
+                },
+                {
+                    caption: "Batal",
+                    cls: "js-dialog-close",
+                    onclick: function(){
+                    }
+                }
+            ]
+        });
+
+    }
+    
+    function get_sound_alert(){
+        url_audio = "<?php echo base_url();?>assets/sound/alert-3.mp3";
+        document.getElementById("alert_sound").innerHTML ="<audio src="+url_audio+" autoplay /audio>";
+    }
+
+
+</script>

@@ -1,0 +1,401 @@
+<?php
+//print_r($this->session->userdata());
+//print_r(opsi_db('jam_analisa'));
+//print_r(opsi_db('material_analisa'));
+//print_r($analisa);
+$jam = "";
+$material = "";
+$parameter = "";
+foreach ( opsi_db('material_analisa','','','') as $key=>$val ){
+    if ($key == $analisa['id_material']){
+      $material .= "<option value='$key' selected>$val</option>";
+    }
+
+}
+
+foreach ( opsi_db('jam_analisa') as $key=>$val ){
+    if ($key==$analisa['id_jam']){
+      $jam .= "<option value='$key' selected='selected'>$val</option>";
+    }
+
+}
+
+foreach (opsi_db('parameter_analisa','','','') as $key=>$val ) {
+    if ($key==$analisa['id_parameter']){
+      $parameter .= "<option value='$key' selected='selected'>$val</option>";
+    }
+}
+
+$nama = nama_user($analisa['id_user']);
+$tanggal = formattanggalindo($analisa['tanggal']);
+$nomor = $analisa['nomor'];
+$hasil = $analisa['hasil'];
+$strike = $analisa['no_strike'];
+$is_data = $analisa['is_data'];
+$input = explode("|",$analisa['input']);
+
+switch ($is_data){
+  case 1:
+    $radio = '<label class="radio">
+                 <input name="status" id="status1" type="radio" data-role="radio" data-caption="Option one" checked="true" class="" data-role-radio="true" value="1">
+                 <span class="check"></span><span class="caption">New</span>
+              </label>';
+  break;
+  case 2:
+    $radio = ' <label class="radio">
+                 <input name="status" id="status2" type="radio" data-role="radio" data-caption="Option two" checked="true" class="" data-role-radio="true" value="2">
+                 <span class="check"></span><span class="caption">Ricek</span>
+               </label>';
+  break;
+  case 3:
+    $radio = '<label class="radio">
+               <input name="status" id="status3" type="radio" data-role="radio" data-caption="Option two" checked="true" class="" data-role-radio="true" value="3">
+               <span class="check"></span><span class="caption">Test</span>
+             </label>';
+  break;
+  default:
+    $radio = "";
+  break;
+}
+
+?>
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="cell-md-11 p-4">
+                    <form name="analisa" id="analisa">
+                        <input type="hidden" name="id_modul" id='id_modulinput' >
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Nama Analis</label>
+                             <div class="cell-sm-5">
+                                 <input type="text" name="namalengkap" value="<?=$nama?>" disabled readonly>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tanggal</label>
+                             <div class="cell-sm-5">
+                                 <input type="text" name="tanggal" value ="<?=$tanggal?>" disabled readonly>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Material</label>
+                             <div class="cell-sm-5">
+                               <select data-role="select" id='material_analisa' name='material_analisa' >
+                                 <?=$material?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Parameter</label>
+                             <div class="cell-sm-11">
+                               <select data-role="select" id='parameter' name='parameter[]' multiple>
+                                 <?=$parameter?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Jam</label>
+                             <div class="cell-sm-5">
+                               <select data-role="select" id='jam_analisa' name='jam_analisa' >
+                                 <?=$jam?>
+                               </select>
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                           <label class="cell-sm-1">Status</label>
+                           <div class="cell-sm-5">
+                               <label class="radio">
+                                  <input name="status" id='status1' type="radio" data-role="radio" data-caption="Option one" checked="true" class="" data-role-radio="true" value="1">
+                                  <span class="check"></span><span class="caption">New</span>
+                               </label>
+                               <label class="radio">
+                                 <input name="status" id='status2' type="radio" data-role="radio" data-caption="Option two" class="" data-role-radio="true" value="2">
+                                 <span class="check"></span><span class="caption">Ricek</span>
+                               </label>
+                               <label class="radio">
+                                 <input name="status" id='status3' type="radio" data-role="radio" data-caption="Option two" class="" data-role-radio="true" value="3">
+                                 <span class="check"></span><span class="caption">Test</span>
+                               </label>
+                           </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[0]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[1]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[2]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[3]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Tarra F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='tarra_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[4]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Tarra F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='tarra_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[5]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Berat Sample</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='sample' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[6]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[7]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[8]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[9]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[10]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Brutto F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='brutto_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[11]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Brutto F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='brutto_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[12]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F1</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f1' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[13]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F2</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f2' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[14]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F3</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f3' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[15]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F4</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f4' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[16]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">Net F5</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='net_f5' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[17]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">Net F6</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='net_f6' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[18]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">G Size</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='g_size' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[19]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">MA</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='ma' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[20]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                         <div class="row mb-2">
+                             <label class="cell-sm-1">SD</label>
+                             <div class="cell-sm-5">
+                                 <input type="text"  name='input[]' id='sd' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[21]?>'
+                                  readonly
+                                  />
+                             </div>
+                             <label class="cell-sm-1"></label>
+                             <label class="cell-sm-1">SV</label>
+                             <div class="cell-sm-4">
+                                 <input type="text"  name='input[]' id='cv' class="input"
+                                  data-role="input"
+                                  data-cls-input="text-bold"
+                                  data-clear-button="false"
+                                  value='<?=$input[22]?>'
+                                  readonly
+                                  />
+                             </div>
+                         </div>
+                     </form>
+                  </div>
+              </div>
+              <div class="panel-title">
+                  <span class="caption"><?=$module_title?></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<script>

@@ -1,0 +1,156 @@
+<?php 
+
+    $table = "";
+    $table2 = "";
+    $target ="";
+    $no=0;     
+    foreach($material as $val){
+        $no_strike = $val->no_strike; 
+        $P013_id=""; 
+        $P013="";
+        $P014_id=""; 
+        $P014="";
+        $P008_id=""; 
+        $P008="";
+        $P002_id=""; 
+        $P002="";
+        $P018_id=""; 
+        $P018="";
+        $P019_id=""; 
+        $P019="";
+        $P020_id=""; 
+        $P020="";
+        $P021_id=""; 
+        $P021="";
+        $P022_id=""; 
+        $P022="";
+        $P084_id=""; 
+        $P084="";
+        $P085_id=""; 
+        $P085="";
+        $P086_id=""; 
+        $P086="";
+        $P080_id=""; 
+        $P080=""; 
+        foreach($analisa as $val_analisa){
+            $strike_analisa = $val_analisa->id_jam;  
+            if($no_strike == $strike_analisa){  
+                switch($val_analisa->id_parameter){
+                    case 'P013':
+                        $P013_id = $val_analisa->id;
+                        $P013 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2); 
+                    break;
+                    case 'P014':
+                        $P014_id = $val_analisa->id;
+                        $P014 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P008':
+                        $P008_id = $val_analisa->id;
+                        $P008= $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P002':
+                        $P002_id = $val_analisa->id;
+                        $P002 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break; 
+                    case 'P018':
+                        $P018_id = $val_analisa->id;
+                        $P018 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2); 
+                    break;
+                    case 'P019':
+                        $P019_id = $val_analisa->id;
+                        $P019 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P020':
+                        $P020_id = $val_analisa->id;
+                        $P020= $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P021':
+                        $P021_id = $val_analisa->id;
+                        $P021 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break; 
+                    case 'P022':
+                        $P022_id = $val_analisa->id;
+                        $P022 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2); 
+                    break;
+                    case 'P084':
+                        $P084_id = $val_analisa->id;
+                        $P084 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P085':
+                        $P085_id = $val_analisa->id;
+                        $P085= $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;
+                    case 'P086':
+                        $P086_id = $val_analisa->id;
+                        $P086 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break; 
+                    case 'P080':
+                        $P080_id = $val_analisa->id;
+                        $P080 = $val_analisa->hasil ==0 ? '' :round($val_analisa->hasil,2);
+                    break;  
+                }  
+                 
+            }  
+        }
+ 
+           $table .= "<tr>
+                    <td style='text-align:center;'>$no_strike</td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P013_id','$P013','$no_strike','Brix')\">$P013</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P014_id','$P014','$no_strike','Brix')\">$P014</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P008_id','$P008','$no_strike','Brix')\">$P008</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P002_id','$P002','$no_strike','Brix')\">$P002</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P018_id','$P018','$no_strike','Brix')\">$P018</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P019_id','$P019','$no_strike','Brix')\">$P019</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P020_id','$P020','$no_strike','Brix')\">$P020</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P021_id','$P021','$no_strike','Brix')\">$P021</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P022_id','$P022','$no_strike','Brix')\">$P022</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P084_id','$P084','$no_strike','Brix')\">$P084</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P085_id','$P085','$no_strike','Brix')\">$P085</a></td>
+                    <td style='text-align:center;'><a class='button-custom' onclick=\"javascript:openDialogUpdateVerifyTmp('$P086_id','$P086','$no_strike','Brix')\">$P086</a></td> 
+                   </tr>"; 
+                 $no++;
+       
+    }
+?> 
+<table  class="table striped table-border cell-border row-border cell-hover subcompact">
+    <thead >
+        <tr class="bg-orange" >
+            <th width='20%' rowspan="2" style='text-align:center; vertical-align: middle;' >Strike</th>  
+            <th width='5%' style='text-align:center;' >Liq. Clr</th>
+            <th width='5%' style='text-align:center;'>Cry. Clr</th>
+            <th width='5%' style='text-align:center;'>Moist.</th>
+            <th width='5%' style='text-align:center;'>Pol</th>
+            <th width='5%' style='text-align:center;'>G-Size</th> 
+            <th width='5%' style='text-align:center;'>MA</th> 
+            <th width='5%' style='text-align:center;'>CV</th> 
+            <th width='5%' style='text-align:center;'>SO2</th> 
+            <th width='5%' style='text-align:center;'>Ash</th> 
+            <th width='5%' style='text-align:center;'>C'fugal</th> 
+            <th width='5%' style='text-align:center;'>Grader</th> 
+            <th width='5%' style='text-align:center;'>Bag</th>  
+        </tr>
+        <tr class="bg-orange" > 
+              <th width='5%' style='text-align:center;' ><300</th>
+            <th width='5%' style='text-align:center;'>5-8</th>
+            <th width='5%' style='text-align:center;'><0.05</th>
+            <th width='5%' style='text-align:center;'>>99,75</th>
+            <th width='5%' style='text-align:center;'>0,8-1,2</th> 
+            <th width='5%' style='text-align:center;'>-</th> 
+            <th width='5%' style='text-align:center;'>-</th> 
+            <th width='5%' style='text-align:center;'><10</th> 
+            <th width='5%' style='text-align:center;'><0,1</th> 
+            <th width='5%' style='text-align:center;'><61</th> 
+            <th width='5%' style='text-align:center;'><40</th> 
+            <th width='5%' style='text-align:center;'><40</th>
+        </tr> 
+    </thead>
+    <tbody>
+        <?=$table?> 
+    </tbody>
+</table>  
+<div class="row border-top bd-gray">
+    <div class="cell-sm-full cell-md-one-third cell-lg-3"></div>
+    <div class="cell-sm-full cell-md-two-third cell-lg-3"><button class="button primary" onclick="simpanVerifikasi('<?=$tgl?>')"><span class="mif-done_all"></span> Simpan</button></div>
+    <div class="cell-sm-full cell-md-half cell-lg-3"><button class="button alert" onclick="batalVerifikasi('<?=$tgl?>' )"><span class="mif-cross"></span> Batal</button></div>
+    <div class="cell-sm-full cell-md-half cell-lg-3"></div>
+</div>

@@ -1,0 +1,137 @@
+<?php
+// Query sudah OK
+ 
+if($ujipetik){
+    
+$kolom =  array(7,25,30,60,70); 
+//print_r($ujipetik);
+//foreach($ujipetik as $data){
+//    echo $data->tanggal;
+//}
+ $timestamp = strtotime($ujipetik[0]->tanggal);
+ $new_date = date("d-m-Y", $timestamp);
+ $cols[0] = $new_date ;
+ $cols[1] = "Factory";
+ $cols[2] = "Divisi" ;
+ $cols[3] = "Unit";
+ $cols[4] = "";
+ $cols[5] = 3; 
+  
+include('pdf_tanggal_inc.php');
+$p = new PDF($cols);
+
+//$xx = $x;
+//$jm1 = $jm1;
+//$jm2 = $jm2;
+$p->AddPage();
+$unit_control = "";
+$n= 0;
+$fill = false;
+// $hdr= "<table cellspacing=0 border='1' width='100%'>";
+         $p->Ln(5); 
+        $p->Cell($kolom[0],7,'No',1,0,'C');
+        $p->Cell($kolom[1],7,'Tanggal',1,0,'C');
+        $p->Cell($kolom[2],7,'Hasil',1,0,'C');
+        $p->Cell($kolom[3],7,'Create By',1,0,'C'); 
+        $p->Cell($kolom[4],7,'Waktu Input',1,0,'C'); 
+        $p->Ln(); 
+        
+foreach($ujipetik as $val){
+        $tanggal = $val->tanggal;
+        $hasil = $val->hasil;
+        $createby = $val->createby;
+        $wkt_input = $val->wkt_input; 
+        $n++;
+        
+//        $x1 = "";
+//        $x2 = "";
+//        $x3 = "";
+//        $x4 = "";
+//        
+//        $waktu =  explode(",", $jamS);
+//        $xy = 0;
+//        foreach($waktu as $isi){
+//        $xy++;
+//            if ($xy == 1){
+//                $x1 = $waktu[0];
+//            }
+//            
+//            if ($xy == 2){
+//                $x2 = $waktu[1];
+//            }
+//            
+//            if ($xy == 3){
+//                $x3 = $waktu[2];
+//            }
+//            
+//            if ($xy == 4){
+//                $x4 = $waktu[3];
+//            }
+//        
+//        }
+//        
+//        if($unit_control != $kode_unit ){
+//        $hdr .= "<tr><td style='B' colspan=7><b>".$nama_unit."</b></td></tr>";
+//        $n=1;
+//        }
+//        $unit_control = $kode_unit;
+        $p->Cell($kolom[0],6,$n,'LR',0,'C',$fill);
+        $p->Cell($kolom[1],6,$tanggal,'LR',0,'C',$fill);
+        $p->Cell($kolom[2],6,$hasil,'LR',0,'L',$fill);
+        $p->Cell($kolom[3],6,$createby,'LR',0,'C',$fill); 
+        $p->Cell($kolom[4],6,$wkt_input,'LR',0,'C',$fill); 
+        $p->Ln(); 
+       // $hdr .= "<tr>	
+//    						<td width='$kolom[0]'  align='center' valign='middle' size='8' >$n</td>	
+//    						<td width='$kolom[1]'  align='center' valign='middle' size='8' >$tanggal</td>
+//    						<td width='$kolom[2]'  align='left' valign='middle' size='8' >$hasil</td>
+//                            <td width='25' align='center' valign='middle' size='8' >$createby</td>
+//                            <td width='25' align='center' valign='middle' size='8' >$wkt_input</td> 
+//    					</tr> ";
+           
+}
+ 
+$p->Cell(array_sum($kolom),0,'','T');
+    //$hdr .="</table> ";  
+   // echo $hdr;
+//        $ttd= "<table cellspacing=0 width='100%'>
+//                <tr>	
+//    						<td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' >Disiapakan Oleh</td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' >Diketahui Oleh</td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                </tr>
+//                <tr>	
+//    						<td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                </tr>
+//                <tr>	
+//    						<td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                </tr>
+//                <tr>	
+//    						<td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' >Personnel Admin</td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                            <td align='center' valign='middle' size='8' >Kabag Personnel</td>
+//                            <td align='center' valign='middle' size='8' ></td>
+//                </tr>
+//				    
+//        </table>";
+$p->htmltable($hdr);
+//$p->Ln(8);
+$p->htmltable($ttd);    
+$p->output('absensi_tanggal.pdf','I');      
+}else{
+    echo " Tidak Ada Data !!";
+}
+
+
+?>

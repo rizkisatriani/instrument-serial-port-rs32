@@ -1,0 +1,90 @@
+function load_page()
+{
+	var baseURL = $('body').data('baseurl');
+	var cat = $('body').data('cat');
+	var menu = $('#page').data('menu');
+	var submenu = $('#page').data('submenu');
+	var module = $('#page').data('module');
+	if (typeof submenu === 'undefined')
+	{
+		//cpanel tidak menggunakan submenu
+		location.href = baseURL + menu + '/' + module
+	}
+	else
+	{
+		location.href = baseURL + menu + '/' + submenu + '/' + module
+	}
+}
+
+function custom_alert_notif(msg="Error System",title="Alert",action="alert"){
+	var notify = Metro.notify;
+		notify.setup({
+				width: 300,
+				duration: 1000,
+				animation: 'easeOutBounce'
+		});
+		notify.create(msg, title, {
+				cls: action
+		});
+		notify.reset();
+}
+
+function custom_alert_YesNo_action(data,url,msg,action){
+	Metro.dialog.create({
+					 title: msg['title'],
+					 content: "<div>"+msg['content']+"</div>",
+					 clsDialog: "alert",
+					 actions: [
+							 {
+									 caption: "Agree",
+									 cls: "js-dialog-close alert",
+									 onclick: function(){
+
+										 $.ajax({
+												 type: 'POST',
+												 data,
+												 cache: false,
+												 url: url,
+												 success: function(result){
+													 var msg = $.trim(result);
+													 if (msg = 'OK') {
+															 showdata();
+													 }else{
+														 alert("Delete Failed");
+													 }
+												 }
+											 });
+
+									 }
+							 },
+							 {
+									 caption: "Disagree",
+									 cls: "js-dialog-close",
+
+							 }
+					 ]
+			 });
+}
+
+
+function chekNumber(e) {
+  var x = e.which || e.keyCode;
+  var vchar = String.fromCharCode(x);
+	/*
+  if (e == 8 || e == 46){
+    return true;
+  }else{
+    if(vchar == '-'){
+      return true;
+    }else{
+      if ((vchar<'0' || vchar>'9') && ( vchar != '.' )) {
+        msg = "Input Harus Bilangan Decimal";
+        custom_alert_notif(msg);
+        return false;
+      }else{
+        return true;
+      }
+    }
+  }*/
+
+}

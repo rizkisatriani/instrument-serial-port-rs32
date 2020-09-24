@@ -1,0 +1,154 @@
+<?php $this->load->view('element/include/breadcrumbs');?>
+
+<div class="m-3" id="content">
+
+  <div id="showdata"></div>
+
+</div>
+<script>
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+  
+  var APIKEY = "<?=APIKEYMD5?>";
+
+  $(document).ready(function(){
+
+    showdata();
+        //console.log(controller);
+  });
+
+  function showdata(){
+    ajax_do_action( 'showdata', 'showdata');
+  }
+
+  function createanalisa(){
+    ajax_do_action( 'open_form_analisa', 'content');
+  }
+
+  function detilanalisa(id){
+    data = new Array();
+    data[1] = id;
+    ajax_do_action( 'open_detil_analisa', 'content',data);
+  }
+  
+  function get_device_setting( ){
+    
+    var request;
+    
+    request = $.ajax({ type: 'POST', data: {'jenis': ""}, cache: false,
+        		      url: baseURL + menu + '/' + submenu + '/' + controller + '/get_device_setting'
+              });
+
+    return request;
+      
+  }
+  
+  function PostParameterAlat(){
+    
+    var request = get_device_setting( );
+    
+    var actifity = Metro.activity.open({        
+                    type: 'metro',
+                    text: '<div class=\'mt-2 text-small\'>Please, wait try to connecting to weigher</div>'
+                });
+    
+    request.done(function (response, textStatus, jqXHR){
+
+        var obj = JSON.parse(response);
+        
+        $.ajax({
+              type:"POST",
+              headers: { "Content-Type": "application/json",
+                         "App-key" : APIKEY
+                        },
+              data : JSON.stringify({
+                      "Id":1,
+                      "Title":"PT Gunung Madu Plantations",
+                      "Author": obj.nama,
+                      "COM_SET": obj.config,
+                      "COM_STATUS":false,
+                      "COM_MESSAGE":"",
+                      "VALUE":"0.00"
+                    }),
+              timeout:5000,
+              url: obj.url,
+              complete :function (data){
+                //console.log(data);
+                Metro.activity.close(actifity);
+                switch (data.status) {
+                  case 201:
+                    //console.log(data);
+                    custom_alert_notif(data.responseText,title="Warning",action="warning");
+                    document.getElementById("buttonget").disabled = false;
+                  break;
+                  case 403:
+                    custom_alert_notif(data.responseText,title="Warning",action="warning");
+                  break;
+                  default:
+                    custom_alert_notif("Weigher Not Connected, Pleace Contact Yout Administrator",title="Alert",action="alert");
+                  break;
+                }
+              }
+        });
+    });
+  }
+  
+  
+  function getAnalisaAlat( resp ){
+    
+    var request = get_device_setting( );
+    
+    request.done(function (response, textStatus, jqXHR){
+   
+        var obj = JSON.parse(response);
+
+        $.ajax({
+          type:"GET",
+          headers: { "Content-Type": "application/json",
+                     "App-key" : APIKEY
+                    },
+          data : JSON.stringify({
+                  "Id":1,
+                  "Title":"PT Gunung Madu Plantations",
+                  "Author":obj.nama,
+                  "COM_SET":obj.config,
+                  "COM_STATUS":false,
+                  "COM_MESSAGE":"",
+                  "VALUE":"0.00"
+                }),
+          timeout:5000,
+          url: obj.url,
+          error: function (error) {
+            //console.log(error.statusText);
+            custom_alert_notif(error.statusText,title="Alert",action="alert");
+          },
+          success :function (data){
+            var str = data.VALUE;
+            //var res = str.split(",");
+            n = str.indexOf(obj.metode_value);
+            console.log(n);
+            str = str.substring(n, n+21);
+            str = str.substring(obj.awal,obj.awal + obj.akhir);
+            //console.log(isi)
+            isi = parseFloat(str);
+            //isi = isi.abs(isi);
+            isi = Math.abs( isi.toFixed(2) );
+
+            $('#hasil').val(isi);
+    
+          }
+        });
+    
+    });
+
+  }
+
+
+
+</script>

@@ -1,0 +1,190 @@
+function get_devices_ip( APIKEY ){
+    
+    $.ajax({
+          type:"GET",
+          headers: { "Content-Type": "application/json",
+                     "App-key" : APIKEY
+                    },
+          timeout:5000,
+          url: "http://localhost:8080/api/book/1",
+          error: function (error) {
+                    document.getElementById('ip_login').innerHTML = "<p class='fg-red'>Service not running</p>";
+                  },
+          success :function (data){
+            ip = data.LocalAddress;
+            $("#ip").val(ip);
+            document.getElementById('ip_login').innerHTML = "<p class='fg-green'>Service is running on "+ip+"</p>";
+             
+          }
+    });
+}
+
+function get_device_setting( ip ){
+    
+    var baseURL = $('body').data('baseurl');
+    
+    var request;
+    request = $.ajax({ type: 'POST', data: {'jenis': "",'ip':ip}, cache: false,
+        		      url: baseURL + 'site/get_device_setting'
+              });
+              
+    return request;      
+}
+
+function post_device_setting( response, APIKEY ){
+    
+    var obj = JSON.parse(response);
+    
+    var actifity = Metro.activity.open({        
+                    type: 'metro',
+                    text: '<div class=\'mt-2 text-small\'>Please, wait try to connecting to '+obj.nama+'</div>'
+                });
+    $.ajax({
+          type:"POST",
+          headers: { "Content-Type": "application/json",
+                     "App-key" : APIKEY
+                    },
+          data : JSON.stringify({
+                  "Id":1,
+                  "Title":"PT Gunung Madu Plantations",
+                  "Author": obj.nama,
+                  "COM_SET": obj.config,
+                  "COM_STATUS":false,
+                  "COM_MESSAGE":"",
+                  "VALUE":"0.00"
+                }),
+          timeout:5000,
+          url: obj.url,
+          complete :function (data){
+            Metro.activity.close(actifity);
+            switch (data.status) {
+              case 201:
+                document.getElementById("buttonget").disabled = false;
+                custom_alert_notif(data.responseText,title="Completed",action="success");
+              break;
+              case 403:
+                custom_alert_notif(data.responseText,title="Error",action="alert");
+              break;
+              default:
+                custom_alert_notif(obj.nama+" Not Connected, Pleace Contact Yout Administrator",title="Alert",action="alert");
+              break;
+            }
+          }
+    });
+}
+
+function get_device_data( response, APIKEY ){
+    
+    var obj = JSON.parse( response );
+    
+    var request;
+
+    request = $.ajax({
+                  type:"GET",
+                  headers: { "Content-Type": "application/json",
+                             "App-key" : APIKEY
+                            },
+                  timeout:5000,
+                  url: obj.url,
+                  error: function (error) {
+                    custom_alert_notif(error.statusText,title="Alert",action="alert");
+                  }
+            });
+    
+    return request;
+    
+}
+
+/*
+function get_data_api(respon,id_devices){
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+  var actifity = Metro.activity.open();
+  //
+  $.ajax({
+    type:'POST', data :{ 'id_devices':id_devices }, chace: false,
+    url : baseURL + 'site/get_api',
+		complete: function()
+		{
+			Metro.activity.close(actifity);
+		},
+    success: function(resp)
+    {
+
+      if ( resp.search("403") > 0 || resp.search("refused") > 0 || resp.search("Timed out") > 0 ){
+        if (resp.search("refused") > 0){
+          document.getElementById("ApiResponse").innerHTML = "<code class='bg-yellow' class='messageResponse'>"+resp+"</code>";
+        }else{
+          document.getElementById("ApiResponse").innerHTML = "<code class='bg-red fg-white' class='messageResponse'>"+resp+"</code>";
+        }
+        $('#'+respon).val(0);
+      }else{
+        $('#'+respon).val(resp);
+        document.getElementById("ApiResponse").innerHTML = "<code class='bg-green fg-white' class='messageResponse'>200 OK</code>";
+      }
+
+    },
+    error: function(resp){
+
+        var responseText = resp['responseText'];
+        var respon = responseText.split(":");
+        var hasil = respon[1].search("403");
+
+        if (hasil > 0){
+            document.getElementById("ApiResponse").innerHTML = "<code class='bg-red fg-white' class='messageResponse'>"+respon[1]+"</code>";
+        }else{
+            document.getElementById("ApiResponse").innerHTML = "<code class='bg-yellow' class='messageResponse'>No response</code>";
+        }
+    }
+  });
+  //console.log(id_devices);
+}
+
+function post_data_api(respon,id_devices){
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+
+  var actifity = Metro.activity.open({
+        type: 'metro',
+        text: '<div class=\'mt-2 text-small\'>Sedang Mencoba Koneksi Ke Devices</div>'
+        //overlayClickClose: true
+    });
+  //
+  $.ajax({
+    type:'POST', data :{ 'id_devices':id_devices }, chace: false,
+    url : baseURL + 'site/post_api',
+    complete: function()
+		{
+			Metro.activity.close(actifity);
+		},
+    success: function(resp)
+    {
+      if ( resp.search("403") > 0 || resp.search("refused") > 0 || resp.search("Timed out") > 0 || resp.search('Error') > 0 ){
+
+        var notify = Metro.notify;
+        notify.create(resp+"<br> Click me to close", "Alert", {
+            keepOpen: true,
+            cls: "alert"
+        });
+
+      }else{
+        document.getElementById(respon).disabled = false;
+      }
+
+      //console.log(resp);
+    }
+  });
+}
+*/

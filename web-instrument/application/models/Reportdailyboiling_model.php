@@ -1,0 +1,223 @@
+<?php
+
+class Reportdailyboiling_model extends CI_Model
+{
+    function __construct()
+    {
+        parent:: __construct();
+
+    }
+    
+    function get_data_t1(  $date ){   
+ $query = $this->db->query('SELECT  
+t.id_jam
+,t.tanggal,
+CASE WHEN MAX(t.B_Masc_CVP1_Brix)=0 THEN MIN(t.B_Masc_CVP1_Brix) ELSE MAX(t.B_Masc_CVP1_Brix) END AS B_Masc_CVP1_Brix,
+CASE WHEN MAX(t.B_Masc_CVP1_Polarization)=0 THEN MIN(t.B_Masc_CVP1_Polarization) ELSE MAX(t.B_Masc_CVP1_Polarization) END AS B_Masc_CVP1_Polarization,
+CASE WHEN MAX(t.B_Masc_CVP2_Brix)=0 THEN MIN(t.B_Masc_CVP2_Brix) ELSE MAX(t.B_Masc_CVP2_Brix) END AS B_Masc_CVP2_Brix,
+CASE WHEN MAX(t.B_Masc_CVP2_Polarization)=0 THEN MIN(t.B_Masc_CVP2_Polarization) ELSE MAX(t.B_Masc_CVP2_Polarization) END AS B_Masc_CVP2_Polarization,
+CASE WHEN MAX(t.C_Masc_CVP1_Brix)=0 THEN MIN(t.C_Masc_CVP1_Brix) ELSE MAX(t.C_Masc_CVP1_Brix) END AS C_Masc_CVP1_Brix,
+CASE WHEN MAX(t.C_Masc_CVP1_Polarization)=0 THEN MIN(t.C_Masc_CVP1_Polarization) ELSE MAX(t.C_Masc_CVP1_Polarization) END AS C_Masc_CVP1_Polarization,
+CASE WHEN MAX(t.C_Masc_CVP2_Brix)=0 THEN MIN(t.C_Masc_CVP2_Brix) ELSE MAX(t.C_Masc_CVP2_Brix) END AS C_Masc_CVP2_Brix,
+CASE WHEN MAX(t.C_Masc_CVP2_Polarization)=0 THEN MIN(t.C_Masc_CVP2_Polarization) ELSE MAX(t.C_Masc_CVP2_Polarization) END AS C_Masc_CVP2_Polarization,
+CASE WHEN MAX(t.C_Masc_Head_Box_Brix)=0 THEN MIN(t.C_Masc_Head_Box_Brix) ELSE MAX(t.C_Masc_Head_Box_Brix) END AS C_Masc_Head_Box_Brix,
+CASE WHEN MAX(t.C_Masc_Head_Box_Polarization)=0 THEN MIN(t.C_Masc_Head_Box_Polarization) ELSE MAX(t.C_Masc_Head_Box_Polarization) END AS C_Masc_Head_Box_Polarization,
+CASE WHEN MAX(t.Final_Molasses_Brix)=0 THEN MIN(t.Final_Molasses_Brix) ELSE MAX(t.Final_Molasses_Brix) END AS Final_Molasses_Brix,
+CASE WHEN MAX(t.Final_Molasses_Polarization)=0 THEN MIN(t.Final_Molasses_Polarization) ELSE MAX(t.Final_Molasses_Polarization) END AS Final_Molasses_Polarization,
+CASE WHEN MAX(t.Final_Molasses_2_Brix)=0 THEN MIN(t.Final_Molasses_2_Brix) ELSE MAX(t.Final_Molasses_2_Brix) END AS Final_Molasses_2_Brix
+FROM(
+SELECT
+    material_analisa.id_material
+    , verifikasi_detil.id_material AS matr
+    , verifikasi_detil.id_parameter AS prmt
+    , parameter_analisa.id_parameter
+    , verifikasi_detil.id_jam
+    , verifikasi_detil.tanggal
+    , verifikasi_detil.hasil,
+CASE WHEN verifikasi_detil.id_material="M015" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_Masc_CVP1_Brix,
+CASE WHEN verifikasi_detil.id_material="M015" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_Masc_CVP1_Polarization,
+CASE WHEN verifikasi_detil.id_material="M016" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_Masc_CVP2_Brix,
+CASE WHEN verifikasi_detil.id_material="M016" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_Masc_CVP2_Polarization,
+CASE WHEN verifikasi_detil.id_material="M017" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C_Masc_CVP1_Brix,
+CASE WHEN verifikasi_detil.id_material="M017" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C_Masc_CVP1_Polarization,
+CASE WHEN verifikasi_detil.id_material="M018" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C_Masc_CVP2_Brix,
+CASE WHEN verifikasi_detil.id_material="M018" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C_Masc_CVP2_Polarization,
+CASE WHEN verifikasi_detil.id_material="M019" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C_Masc_Head_Box_Brix,
+CASE WHEN verifikasi_detil.id_material="M019" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C_Masc_Head_Box_Polarization,
+CASE WHEN verifikasi_detil.id_material="M029" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS Final_Molasses_Brix,
+CASE WHEN verifikasi_detil.id_material="M029" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS Final_Molasses_Polarization,
+CASE WHEN verifikasi_detil.id_material="M153" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS Final_Molasses_2_Brix 
+FROM
+    material_analisa 
+    INNER JOIN verifikasi_detil 
+        ON (material_analisa.id_material = verifikasi_detil.id_material)
+    INNER JOIN parameter_analisa 
+        ON (parameter_analisa.id_parameter = verifikasi_detil.id_parameter)
+        WHERE material_analisa.id_material IN ("M015","M016","M017","M018","M019","M029","M153")
+        AND parameter_analisa.id_parameter IN ("P001","P002") and verifikasi_detil.tanggal="'.$date.'"
+        GROUP BY material_analisa.id_material,parameter_analisa.id_parameter,verifikasi_detil.id_jam
+        ORDER BY verifikasi_detil.id_jam,material_analisa.id_material,parameter_analisa.id_parameter
+        )AS t GROUP BY t.id_jam ORDER BY t.id_jam;
+        ');  
+        return $query->result();
+    }
+
+
+     function get_data_t2( $date ){   
+ $query = $this->db->query('SELECT  
+t.id_jam
+,t.tanggal,
+CASE WHEN MAX(t.B_Magma_Brix)=0 THEN MIN(t.B_Magma_Brix) ELSE MAX(t.B_Magma_Brix) END AS B_Magma_Brix,
+CASE WHEN MAX(t.B_Magma_Polarization)=0 THEN MIN(t.B_Magma_Polarization) ELSE MAX(t.B_Magma_Polarization) END AS B_Magma_Polarization,
+CASE WHEN MAX(t.B_Magma_Liquid_Colour)=0 THEN MIN(t.B_Magma_Liquid_Colour) ELSE MAX(t.B_Magma_Liquid_Colour) END AS B_Magma_Liquid_Colour,
+CASE WHEN MAX(t.C_Magma_Brix)=0 THEN MIN(t.C_Magma_Brix) ELSE MAX(t.C_Magma_Brix) END AS C_Magma_Brix,
+CASE WHEN MAX(t.C_Magma_Polarization)=0 THEN MIN(t.C_Magma_Polarization) ELSE MAX(t.C_Magma_Polarization) END AS C_Magma_Polarization,
+CASE WHEN MAX(t.C_Magma_Liquid_Colour)=0 THEN MIN(t.C_Magma_Liquid_Colour) ELSE MAX(t.C_Magma_Liquid_Colour) END AS C_Magma_Liquid_Colour,
+CASE WHEN MAX(t.B_C_Melting_Brix)=0 THEN MIN(t.B_C_Melting_Brix) ELSE MAX(t.B_C_Melting_Brix) END AS B_C_Melting_Brix,
+CASE WHEN MAX(t.B_C_Melting_Polarization)=0 THEN MIN(t.B_C_Melting_Polarization) ELSE MAX(t.B_C_Melting_Polarization) END AS B_C_Melting_Polarization,
+CASE WHEN MAX(t.B_C_Melting_Liquid_Colour)=0 THEN MIN(t.B_C_Melting_Liquid_Colour) ELSE MAX(t.B_C_Melting_Liquid_Colour) END AS B_C_Melting_Liquid_Colour,
+CASE WHEN MAX(t.C1_Sugar_Brix)=0 THEN MIN(t.C1_Sugar_Brix) ELSE MAX(t.C1_Sugar_Brix) END AS C1_Sugar_Brix,
+CASE WHEN MAX(t.C1_Sugar_Polarization)=0 THEN MIN(t.C1_Sugar_Polarization) ELSE MAX(t.C1_Sugar_Polarization) END AS C1_Sugar_Polarization,
+CASE WHEN MAX(t.C1_Sugar_Liquid_Colour)=0 THEN MIN(t.C1_Sugar_Liquid_Colour) ELSE MAX(t.C1_Sugar_Liquid_Colour) END AS C1_Sugar_Liquid_Colour,
+CASE WHEN MAX(t.C_Wash_Brix)=0 THEN MIN(t.C_Wash_Brix) ELSE MAX(t.C_Wash_Brix) END AS C_Wash_Brix,
+CASE WHEN MAX(t.C_Wash_Polarization)=0 THEN MIN(t.C_Wash_Polarization) ELSE MAX(t.C_Wash_Polarization) END AS C_Wash_Polarization 
+FROM(
+SELECT
+    material_analisa.id_material
+    , verifikasi_detil.id_material AS matr
+    , verifikasi_detil.id_parameter AS prmt
+    , parameter_analisa.id_parameter
+    , verifikasi_detil.id_jam
+    , verifikasi_detil.tanggal
+    , verifikasi_detil.hasil,
+CASE WHEN verifikasi_detil.id_material="M020" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_Magma_Brix,
+CASE WHEN verifikasi_detil.id_material="M020" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_Magma_Polarization,
+CASE WHEN verifikasi_detil.id_material="M020" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS B_Magma_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M021" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C_Magma_Brix,
+CASE WHEN verifikasi_detil.id_material="M021" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C_Magma_Polarization,
+CASE WHEN verifikasi_detil.id_material="M021" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS C_Magma_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M022" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_C_Melting_Brix,
+CASE WHEN verifikasi_detil.id_material="M022" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_C_Melting_Polarization,
+CASE WHEN verifikasi_detil.id_material="M022" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS B_C_Melting_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M023" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C1_Sugar_Brix,
+CASE WHEN verifikasi_detil.id_material="M023" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C1_Sugar_Polarization,
+CASE WHEN verifikasi_detil.id_material="M023" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS C1_Sugar_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M027" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS C_Wash_Brix,
+CASE WHEN verifikasi_detil.id_material="M027" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS C_Wash_Polarization 
+FROM
+    material_analisa 
+    INNER JOIN verifikasi_detil 
+        ON (material_analisa.id_material = verifikasi_detil.id_material)
+    INNER JOIN parameter_analisa 
+        ON (parameter_analisa.id_parameter = verifikasi_detil.id_parameter)
+        WHERE material_analisa.id_material IN ("M020","M021","M022","M023","M027")
+        AND parameter_analisa.id_parameter IN ("P001","P002","P013") and verifikasi_detil.tanggal="'.$date.'"
+        GROUP BY material_analisa.id_material,parameter_analisa.id_parameter,verifikasi_detil.id_jam
+        ORDER BY verifikasi_detil.id_jam,material_analisa.id_material,parameter_analisa.id_parameter
+        )AS t GROUP BY t.id_jam ORDER BY t.id_jam;
+        ');  
+        return $query->result();
+    }
+
+
+ function get_data_t3( $date ){   
+ $query = $this->db->query('SELECT  
+t.id_jam
+,t.tanggal,
+CASE WHEN MAX(t.A_Mol_Tank_Brix)=0 THEN MIN(t.A_Mol_Tank_Brix) ELSE MAX(t.A_Mol_Tank_Brix) END AS A_Mol_Tank_Brix,
+CASE WHEN MAX(t.A_Mol_Tank_Polarization)=0 THEN MIN(t.A_Mol_Tank_Polarization) ELSE MAX(t.A_Mol_Tank_Polarization) END AS A_Mol_Tank_Polarization,
+CASE WHEN MAX(t.A_Mol_Tank_Liquid_Colour)=0 THEN MIN(t.A_Mol_Tank_Liquid_Colour) ELSE MAX(t.A_Mol_Tank_Liquid_Colour) END AS A_Mol_Tank_Liquid_Colour,
+CASE WHEN MAX(t.A_Wash_Brix)=0 THEN MIN(t.A_Wash_Brix) ELSE MAX(t.A_Wash_Brix) END AS A_Wash_Brix,
+CASE WHEN MAX(t.A_Wash_Polarization)=0 THEN MIN(t.A_Wash_Polarization) ELSE MAX(t.A_Wash_Polarization) END AS A_Wash_Polarization,
+CASE WHEN MAX(t.A_Wash_Liquid_Colour)=0 THEN MIN(t.A_Wash_Liquid_Colour) ELSE MAX(t.A_Wash_Liquid_Colour) END AS A_Wash_Liquid_Colour,
+CASE WHEN MAX(t.B_Mol_Heavy_Brix)=0 THEN MIN(t.B_Mol_Heavy_Brix) ELSE MAX(t.B_Mol_Heavy_Brix) END AS B_Mol_Heavy_Brix,
+CASE WHEN MAX(t.B_Mol_Heavy_Polarization)=0 THEN MIN(t.B_Mol_Heavy_Polarization) ELSE MAX(t.B_Mol_Heavy_Polarization) END AS B_Mol_Heavy_Polarization, 
+CASE WHEN MAX(t.B_Mol_Tank_Brix)=0 THEN MIN(t.B_Mol_Tank_Brix) ELSE MAX(t.B_Mol_Tank_Brix) END AS B_Mol_Tank_Brix,
+CASE WHEN MAX(t.B_Mol_Tank_Polarization)=0 THEN MIN(t.B_Mol_Tank_Polarization) ELSE MAX(t.B_Mol_Tank_Polarization) END AS B_Mol_Tank_Polarization,
+CASE WHEN MAX(t.B_Mol_Tank_Liquid_Colour)=0 THEN MIN(t.B_Mol_Tank_Liquid_Colour) ELSE MAX(t.B_Mol_Tank_Liquid_Colour) END AS B_Mol_Tank_Liquid_Colour,
+CASE WHEN MAX(t.Sugar_Scrubber_Brix)=0 THEN MIN(t.Sugar_Scrubber_Brix) ELSE MAX(t.Sugar_Scrubber_Brix) END AS Sugar_Scrubber_Brix 
+FROM(
+SELECT
+    material_analisa.id_material
+    , verifikasi_detil.id_material AS matr
+    , verifikasi_detil.id_parameter AS prmt
+    , parameter_analisa.id_parameter
+    , verifikasi_detil.id_jam
+    , verifikasi_detil.tanggal
+    , verifikasi_detil.hasil,
+CASE WHEN verifikasi_detil.id_material="M024" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS A_Mol_Tank_Brix,
+CASE WHEN verifikasi_detil.id_material="M024" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS A_Mol_Tank_Polarization,
+CASE WHEN verifikasi_detil.id_material="M024" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS A_Mol_Tank_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M025" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS A_Wash_Brix,
+CASE WHEN verifikasi_detil.id_material="M025" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS A_Wash_Polarization,
+CASE WHEN verifikasi_detil.id_material="M025" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS A_Wash_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M026" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_Mol_Heavy_Brix,
+CASE WHEN verifikasi_detil.id_material="M026" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_Mol_Heavy_Polarization, 
+CASE WHEN verifikasi_detil.id_material="M028" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS B_Mol_Tank_Brix,
+CASE WHEN verifikasi_detil.id_material="M028" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS B_Mol_Tank_Polarization,
+CASE WHEN verifikasi_detil.id_material="M028" AND verifikasi_detil.id_parameter="P013" THEN  hasil ELSE 0 END AS B_Mol_Tank_Liquid_Colour,
+CASE WHEN verifikasi_detil.id_material="M040" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS Sugar_Scrubber_Brix  
+FROM
+    material_analisa 
+    INNER JOIN verifikasi_detil 
+        ON (material_analisa.id_material = verifikasi_detil.id_material)
+    INNER JOIN parameter_analisa 
+        ON (parameter_analisa.id_parameter = verifikasi_detil.id_parameter)
+        WHERE material_analisa.id_material IN ("M024","M025","M026","M028","M040")
+        AND parameter_analisa.id_parameter IN ("P001","P002","P013")
+        and verifikasi_detil.tanggal="'.$date.'"
+        GROUP BY material_analisa.id_material,parameter_analisa.id_parameter,verifikasi_detil.id_jam
+        ORDER BY verifikasi_detil.id_jam,material_analisa.id_material,parameter_analisa.id_parameter
+        )AS t GROUP BY t.id_jam ORDER BY t.id_jam;');  
+        return $query->result();
+    }
+     
+ function get_data_t4( $date ){   
+ $query = $this->db->query('SELECT  
+t.id_jam
+,t.tanggal,
+CASE WHEN MAX(t.Nuscth_C_CVP_1_Brix)=0 THEN MIN(t.Nuscth_C_CVP_1_Brix) ELSE MAX(t.Nuscth_C_CVP_1_Brix) END AS Nuscth_C_CVP_1_Brix,
+CASE WHEN MAX(t.Nuscth_C_CVP_1_Polarization)=0 THEN MIN(t.Nuscth_C_CVP_1_Polarization) ELSE MAX(t.Nuscth_C_CVP_1_Polarization) END AS Nuscth_C_CVP_1_Polarization,
+CASE WHEN MAX(t.Nuscth_C_CVP_2_Brix)=0 THEN MIN(t.Nuscth_C_CVP_2_Brix) ELSE MAX(t.Nuscth_C_CVP_2_Brix) END AS Nuscth_C_CVP_2_Brix,
+CASE WHEN MAX(t.Nuscth_C_CVP_2_Polarization)=0 THEN MIN(t.Nuscth_C_CVP_2_Polarization) ELSE MAX(t.Nuscth_C_CVP_2_Polarization) END AS Nuscth_C_CVP_2_Polarization
+FROM(
+SELECT
+    material_analisa.id_material
+    , verifikasi_detil.id_material AS matr
+    , verifikasi_detil.id_parameter AS prmt
+    , parameter_analisa.id_parameter
+    , verifikasi_detil.id_jam
+    , verifikasi_detil.tanggal
+    , verifikasi_detil.hasil,
+CASE WHEN verifikasi_detil.id_material="M154" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS Nuscth_C_CVP_1_Brix,
+CASE WHEN verifikasi_detil.id_material="M154" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS Nuscth_C_CVP_1_Polarization,
+CASE WHEN verifikasi_detil.id_material="M155" AND verifikasi_detil.id_parameter="P001" THEN  hasil ELSE 0 END AS Nuscth_C_CVP_2_Brix,
+CASE WHEN verifikasi_detil.id_material="M155" AND verifikasi_detil.id_parameter="P002" THEN  hasil ELSE 0 END AS Nuscth_C_CVP_2_Polarization 
+FROM
+    material_analisa 
+    INNER JOIN verifikasi_detil 
+        ON (material_analisa.id_material = verifikasi_detil.id_material)
+    INNER JOIN parameter_analisa 
+        ON (parameter_analisa.id_parameter = verifikasi_detil.id_parameter)
+        WHERE material_analisa.id_material IN ("M154","M155")
+        AND parameter_analisa.id_parameter IN ("P001","P002" )
+        and verifikasi_detil.tanggal="'.$date.'"
+        GROUP BY material_analisa.id_material,parameter_analisa.id_parameter,verifikasi_detil.id_jam
+        ORDER BY verifikasi_detil.id_jam,material_analisa.id_material,parameter_analisa.id_parameter
+        )AS t GROUP BY t.id_jam ORDER BY t.id_jam;');  
+        return $query->result();
+    }
+
+     function get_data_count($date){   
+                 $query = $this->db->query(' 
+                SELECT verifikasi_detil.id_verifikasi AS id, 
+                verifikasi_detil.id_jam AS id_jam 
+                FROM  verifikasi_detil
+                WHERE verifikasi_detil.id_material IN ("M024","M025","M026","M028","M040") AND 
+                verifikasi_detil.id_parameter IN ("P001","P002","P013")  and 
+                verifikasi_detil.tanggal="'.$date.'" GROUP BY  id_jam'); 
+                return $query->num_rows();   
+        }
+            
+}
+ ?>

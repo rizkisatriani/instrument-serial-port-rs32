@@ -1,0 +1,228 @@
+<?php
+
+//print_r($this->session->userdata);
+
+$NAVBAR = "";
+$menu = array();
+
+foreach ($arraymodules as $arraymodule)
+{
+	$menu[$arraymodule[0]] = $arraymodule[1];
+
+	$submenu[$arraymodule[0]][$arraymodule[2]] = array($arraymodule[3],$arraymodule[4]);
+
+	$module[$arraymodule[2]][$arraymodule[5]] = array($arraymodule[6],$arraymodule[7]);
+
+}
+if ($url_menu=='home'){
+    $active = 'active';
+}else{
+    $active = '';
+}
+
+
+$NAVBAR .="<li class='item-header'>HOME</li>
+            <li class='$active'>
+                <a href='".base_url()."'>
+                    <span class='icon'><span class='mif-meter'></span></span>
+                    <span class='caption'>Dashboard</span>
+                </a>
+            </li>";
+
+
+
+foreach ($menu as $keymenu => $valmenu)
+{
+	$NAVBAR .= "<li class='item-header'>$valmenu</li>";
+
+    $num_submenu = count($submenu[$keymenu]);
+
+    if ($num_submenu){
+        //print_r($num_submenu);
+        foreach($submenu[$keymenu] as $arrsubmenu => $valsubmenu)
+        {
+            if ( $url_submenu == $arrsubmenu ) { $active = ' active'; } else { $active = ""; }
+
+            $NAVBAR .= "<li class='active-container $active'>
+                        <a href='#' class='dropdown-toggle active-toggle active-control'>
+                            <span class='icon'><span class='$valsubmenu[1]'></span></span>
+                            <span class='caption'>$valsubmenu[0]</span>
+                        </a>";
+                    $NAVBAR .="<ul class='navview-menu stay-open' data-role='dropdown'>";
+                        $NAVBAR .="<li class='item-header'><span class='caption'>$valsubmenu[0]</span></li>";
+                        foreach ( $module[$arrsubmenu] as $arrmodul => $valmodul){
+                            $NAVBAR .="<li> <a href='".site_url($keymenu."/".$arrsubmenu."/".$arrmodul)."'>
+                                            <span class='icon'><span class='$valmodul[1]'></span></span>
+                                            <span class='caption'>$valmodul[0]</span>
+                                        </a></li>";
+                        }
+                    $NAVBAR .="</ul>";
+            $NAVBAR .= "</li>";
+
+        }
+    }
+
+}
+
+$gender = $this->session->userdata('gender');
+$namauser = $this->session->userdata('namalengkap');
+$is_admin = $this->session->userdata('is_admin');
+$bidang_kerja = $this->session->userdata('bidang_kerja');
+
+if ($gender == 'L'){
+    $img = base_url()."assets/images/users/user.png";
+}else{
+    $img = base_url()."assets/images/users/user-woman.png";
+}
+
+$akses = get_client_ip();
+/*
+if ($is_admin){
+    $akses = "Administrator";
+}else{
+    $akses = "USER";
+}
+*/
+
+
+?>
+<body class="m4-cloak h-vh-100" data-baseurl="<?php echo base_url(); ?>" data-cat="<?php echo $this->uri->segment(1); ?>">
+<input type='hidden' name="ip" id="ip"/>
+<div data-role="navview" data-toggle="#paneToggle" data-expanded="xl" data-compact="lg" data-active-state="true">
+    <div class="navview-pane">
+        <div class="bg-cyan d-flex flex-align-center">
+            <button class="pull-button m-0 bg-darkCyan-hover">
+                <span class="mif-menu fg-white"></span>
+            </button>
+            <h2 class="text-light m-0 fg-white pl-7" style="line-height: 52px"><?=SYSTEM_ALIAS?></h2>
+						<!--<p class="text-small m-0 fg-white pl-7" style="line-height: 9px"><?=SYSTEM_NAME?></p>-->
+        </div>
+
+        <div class="suggest-box">
+            <div class="data-box">
+                <img src="<?=$img?>" class="avatar">
+                <div class="ml-4 avatar-title flex-column">
+                    <a href="#" class="d-block fg-white text-medium no-decor"><span class="reduce-1"><?=$namauser?></span></a>
+                    <p class="m-0"><span class="fg-green mr-2">&#x25cf;</span><span class="text-small"><?=$bidang_kerja?></span></p>
+                </div>
+            </div>
+            <img src="<?=$img?>" class="avatar holder ml-2">
+        </div>
+
+        <div class="suggest-box">
+            <input type="text" data-role="input" data-clear-button="false" data-search-button="true">
+            <button class="holder">
+                <span class="mif-search fg-white"></span>
+            </button>
+        </div>
+
+        <ul class="navview-menu mt-4" id="side-menu">
+        <!--star menu-->
+            <?=$NAVBAR?>
+        <!-- end Menu -->
+        </ul>
+
+        <div class="w-100 text-center text-small data-box p-2 border-top bd-grayMouse" style="position: absolute; bottom: 0">
+            <div><a><small><span id="ip_login"></span></small></a></div>
+            <div>&copy; 2020 PT Gunung Madu Plantations</div>
+            <div><a><small><?=SYSTEM_ALIAS?> - <?=SYSTEM_NAME?></small></a></div>
+        </div>
+    </div>
+
+    <div class="navview-content h-100">
+        <div data-role="appbar" class="pos-absolute bg-darkCyan fg-white">
+
+            <a href="#" class="app-bar-item d-block d-none-lg" id="paneToggle"><span class="mif-menu"></span></a>
+
+            <div class="app-bar-container ml-auto">
+                <!--
+                <a href="#" class="app-bar-item">
+                    <span class="mif-envelop"></span>
+                    <span class="badge bg-green fg-white mt-2 mr-1">4</span>
+                </a>
+                <a href="#" class="app-bar-item">
+                    <span class="mif-bell"></span>
+                    <span class="badge bg-orange fg-white mt-2 mr-1">10</span>
+                </a>
+                <a href="#" class="app-bar-item">
+                    <span class="mif-flag"></span>
+                    <span class="badge bg-red fg-white mt-2 mr-1">9</span>
+                </a>-->
+                <div class="app-bar-container">
+                    <a href="#" class="app-bar-item">
+                        <img src="<?=$img?>" class="avatar">
+                        <span class="ml-2 app-bar-name"><?=$namauser?></span>
+                    </a>
+                    <div class="user-block shadow-1" data-role="collapse" data-collapsed="true">
+                        <div class="bg-darkCyan fg-white p-2 text-center">
+                            <img src="<?=$img?>" class="avatar">
+                            <div class="h4 mb-0"><?=$namauser?></div>
+                            <div><?=$bidang_kerja?></div>
+                        </div>
+                        <div class="bg-white d-flex flex-justify-between flex-equal-items p-2 bg-light">
+                            <button class="button mr-1" onclick="location.href='<?=base_url()."users/profil"?>'">Profile</button>
+                            <button class="button ml-1" onclick="location.href='<?=base_url('Site/logout')?>'">Sign out</button>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="app-bar-item">
+                    <span class="mif-cogs"></span>
+                </a>
+            </div>
+        </div>
+        
+        <div id="content-wrapper" class="content-inner h-100" style="overflow-y: auto">
+<script>
+
+    var APIKEY = "<?=APIKEYMD5?>";
+    get_devices_ip(APIKEY);
+    /*
+    var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;  
+    if (RTCPeerConnection)(function() {  
+        var rtc = new RTCPeerConnection({  
+            iceServers: []  
+        });  
+        if (1 || window.mozRTCPeerConnection) {  
+            rtc.createDataChannel('', {  
+                reliable: false  
+            });  
+        };  
+        rtc.onicecandidate = function(evt) {  
+            if (evt.candidate) grepSDP("a=" + evt.candidate.candidate);  
+        };  
+        rtc.createOffer(function(offerDesc) {  
+            grepSDP(offerDesc.sdp);  
+            rtc.setLocalDescription(offerDesc);  
+        }, function(e) {  
+            console.warn("offer failed", e);  
+        });  
+        var addrs = Object.create(null);  
+        addrs["0.0.0.0"] = false;  
+      
+        function updateDisplay(newAddr) {  
+            if (newAddr in addrs) return;  
+            else addrs[newAddr] = true;  
+            var displayAddrs = Object.keys(addrs).filter(function(k) {  
+                return addrs[k];  
+            });  
+            document.getElementById('ip_login').textContent = displayAddrs.join(" or perhaps ") || "n/a";  
+        }  
+      
+        function grepSDP(sdp) {  
+            var hosts = [];  
+            sdp.split('\r\n').forEach(function(line) {  
+                if (~line.indexOf("a=candidate")) {  
+                    var parts = line.split(' '),  
+                        addr = parts[4],  
+                        type = parts[7];  
+                    if (type === 'host') updateDisplay(addr);  
+                } else if (~line.indexOf("c=")) {  
+                    var parts = line.split(' '),  
+                        addr = parts[2];  
+                    updateDisplay(addr);  
+                }  
+            });  
+        }  
+    })();  
+    */
+</script>

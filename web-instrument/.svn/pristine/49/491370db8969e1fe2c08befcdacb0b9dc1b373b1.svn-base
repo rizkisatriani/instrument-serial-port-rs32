@@ -1,0 +1,117 @@
+
+<?php
+date_default_timezone_set('Asia/Jakarta');
+$tanggal = date("Y-m-d H:i:s");
+$hari = date("l");
+$day = date("d");
+
+echo "
+<div id='page' class='row border-bottom bd-lightGrayBlue m-3'
+  data-menu=\"$menu\"
+  data-submenu=\"$submenu\"
+  data-module=\"$module\"
+  data-module_id=\"$module_id\"
+  data-submenu_title=\"$submenu_title\"
+  data-module_title=\"$module_title\"
+>
+<div class='cell-md-10 text-left d-flex flex-justify-left flex-justify-left-md'>
+  <ul class='breadcrumbsCustom bg-transparent'>
+    <li class='page-item'><a class='page-link'><span class='$submenulogo'></span></a></li>
+    <li class='page-item'><a class='page-link'>$submenu_title</a></li>
+    <li class='page-item'><a href='javascript:load_page()' class='page-link'>$module_title</a></li>
+  </ul>
+</div>
+  <div class='cell-md-2 text-center text-end-md'>
+    <span id='jam'></span>
+  </div>
+</div>";
+
+?>
+
+<script>
+  var serverTime = new Date(<?php print date('Y, m, d, H, i, s, 0'); ?>)
+  var clientTime = new Date();
+  var Diff = serverTime.getTime() - clientTime.getTime();
+
+  $( document ).ready(function(){
+
+		setInterval(function() { show_waktu(); },50);
+
+	});
+
+  function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+  }
+
+  function show_waktu(){
+    var clientTime = new Date();
+    var d = new Date(clientTime.getTime() + Diff); //buat object date dengan menghitung selisih waktu client dan server
+    //console.log(d);
+  	var h = addZero(d.getHours());
+  	var m = addZero(d.getMinutes());
+  	var s = addZero(d.getSeconds());
+    var month = new Array();
+    month[1] = "Jan";
+    month[3] = "Feb";
+    month[3] = "Mar";
+    month[4] = "Apr";
+    month[5] = "May";
+    month[6] = "Jun";
+    month[7] = "Jul";
+    month[8] = "Aug";
+    month[9] = "Sep";
+    month[10] = "Oct";
+    month[11] = "Nov";
+    month[12] = "Dec";
+
+    var day = addZero(d.getDate());
+
+    $("#jam").html("<div class='countdown' data-animate='slide' style='font-size: 24px;'> "+
+                      "<div data-label='"+month[d.getMonth()]+" "+d.getFullYear()+"' class='part days no-divider bg-orange fg-white'> "+
+                        "<div class='digit'> "+
+                          "<span class='digit-placeholder'>0</span> "+
+                          "<span class='digit-value'>"+String(day).substring(0,2)+"</span> "+
+                        "</div> "+
+                        "<div class='digit'> "+
+                          "<span class='digit-placeholder'>0</span> "+
+                          "<span class='digit-value'>"+String(day).substring(1,2)+"</span> "+
+                        "</div> "+
+                      "</div> "+
+                     "<div data-label='HOURS' class='part hours no-divider bg-red fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(h).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(h).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                     "<div data-label='MINS' class='part minutes no-divider bg-green fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(m).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(m).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                     "<div data-label='SECS' class='part seconds no-divider bg-blue fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(s).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(s).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                   "</div>");
+  }
+
+
+</script>

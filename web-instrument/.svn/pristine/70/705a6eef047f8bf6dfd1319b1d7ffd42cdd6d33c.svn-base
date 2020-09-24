@@ -1,0 +1,125 @@
+<?php $this->load->view('element/include/breadcrumbs');?>
+
+<div class="m-3" id="content">
+
+  <div id="showdata"></div>
+
+</div>
+<script>
+
+  var baseURL = $('body').data('baseurl');
+  var cat = $('body').data('cat');
+  var menu = $('#page').data('menu');
+  var submenu = $('#page').data('submenu');
+  var module = $('#page').data('module');
+  var module_id = $('#page').data('module_id');
+  var controller = module.capitalize() + "_controller";
+
+  $(document).ready(function(){
+
+    showdata();
+
+        //console.log(controller);
+  });
+
+  function showdata(){
+    ajax_do_action( 'showdata', 'showdata');
+  }
+
+  function createanalisa(){
+    ajax_do_action( 'open_form_analisa', 'content');
+  }
+
+  function detilanalisa(id){
+    data = new Array();
+    data[1] = id;
+    ajax_do_action( 'open_detil_analisa', 'content',data);
+  }
+
+ function PostParameterAlat(){
+    var ip = $("#ip").val();
+    var request = get_device_setting(ip); 
+    
+    request.done(function (response, textStatus, jqXHR){
+        
+   
+        dataSetting = response;
+        if (response){
+            post_device_setting(response,APIKEY); // ambil dari serialdata.js
+        } 
+    });
+  }
+  
+  
+  function getAnalisaAlat( resp ){
+
+    var obj = JSON.parse( dataSetting );
+    console.log(obj);
+    var request = get_device_data(dataSetting, APIKEY); //ambil dari 
+    
+    var brix1 = $("#brix1").val();
+    var brix2 = $("#brix2").val(); 
+    
+    request.done(function (response, textStatus, jqXHR){
+        var str = response.VALUE;
+         console.log(response);
+        if (str){
+            param=$("#material_analisa").val();
+           // isi = str.substring(obj.awal, obj.akhir);
+            var patrnbrx = /Brix:.+\d/i;
+
+            switch(param) {
+
+              case '5':
+            var patrpol = /pol Bagasse GMP\*:.+\d/i;
+             pol= str.match(patrpol);
+            pol=pol.toString().replace("pol Bagasse GMP*:", ""); 
+                break; 
+
+                 case '7':
+            var patrpol = /Pol Filter Cake-GMP\*:.+\d/i;
+             pol= str.match(patrpol);
+            pol=pol.toString().replace("Pol Filter Cake-GMP*:", ""); 
+                break; 
+
+              default:
+            var patrpol = /Pol-GMP 100 mm\*:.+\d/i; 
+            pol= str.match(patrpol);
+            pol=pol.toString().replace("Pol-GMP 100 mm*:", "");
+                break;
+            } 
+
+            brx= str.match(patrnbrx);
+            brx=brx.toString().replace("Brix:", "");
+            brx = parseFloat(brx);
+            brx = Math.abs( brx.toFixed(2) );
+            console.log("isi :"+patrpol+": "+param);
+ 
+            pol = parseFloat(pol);
+            pol = Math.abs( pol.toFixed(2) ); 
+            console.log("pol :"+pol);
+             
+                $("#brix").val(brx); 
+                $("#pol").val(pol);  
+                if(brx==0||pol==0){
+                  hasil=0;
+                }else{
+                hasil = brx/pol*100;
+                hasil = hasil.toFixed(2); 
+                }
+                $("#hasil").val(hasil);
+            
+        }
+    });
+    
+  }
+  
+ 
+  
+  function resetform(){ 
+        $("#pol").val(0);
+        $("#hasil").val(0);
+        $("#brix").val(0); 
+  }
+
+</script>

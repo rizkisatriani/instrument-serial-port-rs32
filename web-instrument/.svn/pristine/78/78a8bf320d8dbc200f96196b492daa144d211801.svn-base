@@ -1,0 +1,101 @@
+<?php
+
+class Reportdailyboilerwater_model extends CI_Model
+{
+    function __construct()
+    {
+        parent:: __construct();
+
+    }
+    
+    function get_data($date){  
+
+        $query = $this->db->query('SELECT
+                t.material,
+                tanggal,
+                id_jam, 
+                CASE WHEN MAX(t.P003) = 0 THEN MIN(t.P003) ELSE MAX(t.P003) END AS P003,
+                CASE WHEN MAX(t.P028) = 0 THEN MIN(t.P028) ELSE MAX(t.P028) END AS P028,
+                CASE WHEN MAX(t.P029) = 0 THEN MIN(t.P029) ELSE MAX(t.P029) END AS P029,
+                CASE WHEN MAX(t.P030) = 0 THEN MIN(t.P030) ELSE MAX(t.P030) END AS P030,
+                CASE WHEN MAX(t.P031) = 0 THEN MIN(t.P031) ELSE MAX(t.P031) END AS P031,
+                CASE WHEN MAX(t.P032) = 0 THEN MIN(t.P032) ELSE MAX(t.P032) END AS P032,
+                CASE WHEN MAX(t.P033) = 0 THEN MIN(t.P033) ELSE MAX(t.P033) END AS P033,
+                CASE WHEN MAX(t.P034) = 0 THEN MIN(t.P034) ELSE MAX(t.P034) END AS P034,
+                CASE WHEN MAX(t.P035) = 0 THEN MIN(t.P035) ELSE MAX(t.P035) END AS P035,
+                CASE WHEN MAX(t.P036) = 0 THEN MIN(t.P036) ELSE MAX(t.P036) END AS P036,
+                CASE WHEN MAX(t.P037) = 0 THEN MIN(t.P037) ELSE MAX(t.P037) END AS P037,
+                CASE WHEN MAX(t.P038) = 0 THEN MIN(t.P038) ELSE MAX(t.P038) END AS P038,
+                CASE WHEN MAX(t.P039) = 0 THEN MIN(t.P039) ELSE MAX(t.P039) END AS P039
+                FROM(
+                SELECT  
+                verifikasi_detil.id_material , 
+                material_analisa.id_material AS material , 
+                tanggal,
+                id_jam, 
+                CASE WHEN verifikasi_detil.id_parameter = "P003" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P003,
+                CASE WHEN verifikasi_detil.id_parameter = "P028" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P028,
+                CASE WHEN verifikasi_detil.id_parameter = "P029" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P029,
+                CASE WHEN verifikasi_detil.id_parameter = "P030" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P030,
+                CASE WHEN verifikasi_detil.id_parameter = "P031" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P031,
+                CASE WHEN verifikasi_detil.id_parameter = "P032" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P032,
+                CASE WHEN verifikasi_detil.id_parameter = "P033" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P033,
+                CASE WHEN verifikasi_detil.id_parameter = "P034" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P034,
+                CASE WHEN verifikasi_detil.id_parameter = "P035" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P035,
+                CASE WHEN verifikasi_detil.id_parameter = "P036" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P036,
+                CASE WHEN verifikasi_detil.id_parameter = "P037" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P037,
+                CASE WHEN verifikasi_detil.id_parameter = "P038" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P038,
+                CASE WHEN verifikasi_detil.id_parameter = "P039" AND verifikasi_detil.id_material=material_analisa.id_material THEN verifikasi_detil.hasil ELSE 0 END AS P039,
+                hasil
+                FROM verifikasi_detil 
+                RIGHT JOIN material_analisa
+                ON(material_analisa.urut_boiler IS NOT NULL)
+                LEFT JOIN parameter_analisa
+                ON (parameter_analisa.id_parameter=verifikasi_detil.id_parameter)
+                WHERE  parameter_analisa.is_boiler=1 AND param="boiler" AND tanggal="2020-07-06"
+                GROUP BY verifikasi_detil.id_material,material_analisa.id_material,id_jam
+                ORDER BY id_jam,material_analisa.id_material
+                ) AS t
+                 GROUP BY t.material,t.id_jam 
+                 ORDER BY t.material,t.id_jam');  
+        return $query->result();
+    }
+ 
+     function get_data_count($date){   
+                $query = $this->db->query('SELECT 
+                t.id AS id,
+                t.tanggal AS tanggal,
+                t.id_jam AS id_jam,
+                t.id_material AS id_material,
+                t.NAME AS NAME,
+                CASE WHEN MAX(t.pH) = 0 THEN MIN(t.pH) ELSE MAX(t.pH) END AS pH,
+                CASE WHEN MAX(t.Sugar) = 0 THEN MIN(t.Sugar) ELSE MAX(t.Sugar) END AS Sugar 
+                FROM (
+                SELECT verifikasi_detil.id_verifikasi AS id,
+                verifikasi.tanggal AS tanggal,
+                verifikasi_detil.id_jam AS id_jam,
+                material_analisa.id_material AS id_material,
+                verifikasi_detil.id_material AS material,
+                verifikasi_detil.id_parameter AS id_parameter,
+                verifikasi_detil.hasil AS hasil,
+                material_analisa.name AS NAME,
+                CASE WHEN (material_analisa.id_material = verifikasi_detil.id_material 
+                AND verifikasi_detil.id_parameter = "P003") THEN verifikasi_detil.hasil ELSE 0 END AS pH,
+                CASE WHEN (material_analisa.id_material = verifikasi_detil.id_material 
+                AND verifikasi_detil.id_parameter = "P029") THEN verifikasi_detil.hasil ELSE 0 END AS Sugar 
+                FROM (
+                material_analisa 
+                LEFT JOIN 
+                (verifikasi JOIN verifikasi_detil 
+                ON(verifikasi_detil.id_material IN ("M045","M046","M047","M048","M049","M050","M057","M058","M059","M060","M061") 
+                AND verifikasi.id = verifikasi_detil.id_verifikasi)) 
+                ON(material_analisa.id_material IN ("M045","M046","M047","M048","M049","M050","M057","M058","M059","M060","M061"))) 
+                WHERE verifikasi_detil.param IN ("water","boiler") AND verifikasi_detil.tanggal="'.$date.'"
+                ORDER BY verifikasi_detil.id_jam,material_analisa.id_material) t 
+                GROUP BY  t.id_jam 
+                ORDER BY t.id_jam ;'); 
+                return $query->num_rows();  
+        }
+            
+}
+ ?>

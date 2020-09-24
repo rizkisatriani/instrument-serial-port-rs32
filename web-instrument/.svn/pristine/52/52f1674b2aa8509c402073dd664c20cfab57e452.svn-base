@@ -1,0 +1,1098 @@
+<?php
+
+class Analisa_model extends CI_Model
+{
+
+	function __construct()
+	{
+		parent:: __construct();
+
+	}
+    
+	function show_analisa(){
+
+		$moduleid = $this->input->post('module_id');
+
+		$this->db->select('hasil_analisa.id,hasil_analisa.nomor,hasil_analisa.tanggal,
+							hasil_analisa.nilai_a,hasil_analisa.nilai_b,jam_analisa.desc as jam,
+							hasil_analisa.no_strike,hasil_analisa.time_strike,hasil_analisa.pan_strike,
+							hasil_analisa.boiling_time_strike,hasil_analisa.vol_strike,parameter_analisa.nama_parameter,
+							hasil_analisa.is_data,material_analisa.name as materialname,create.namalengkap as createby');
+		$this->db->from('hasil_analisa');
+		$this->db->join('jam_analisa', 'jam_analisa.id = hasil_analisa.id_jam', 'left');
+		$this->db->join('users as create', 'create.id = hasil_analisa.id_user', 'inner');
+		$this->db->join('material_analisa', 'material_analisa.id = hasil_analisa.id_material', 'left');
+		$this->db->join('parameter_analisa', 'parameter_analisa.id_parameter = hasil_analisa.id_parameter', 'left');
+		$this->db->where('hasil_analisa.id_modul', $moduleid);
+		$this->db->where('hasil_analisa.is_show', 1);
+		$this->db->order_by('hasil_analisa.nomor', 'DESC');
+
+		$query = $this->db->get();
+
+    	return $query->result();
+
+	}
+
+	function get_last_nomor()
+    {
+    	$tanggal = date("d-m-Y");
+    	$bulan = sprintf("%02s", substr($tanggal, 3, 2));
+    	$tahun = substr($tanggal, 6, 4);
+
+    	$query = $this->db->query("select max(right(nomor,7)) as last, nomor from hasil_analisa
+                                    where month(tanggal)='$bulan' and year(tanggal)='$tahun'");
+
+    	$nomor = $query->row()->last;
+    	return $nomor;
+    }
+
+	function get_nomor_formulir(){
+
+        $tanggal = date("d-m-Y");
+
+    	$bulan = sprintf("%02s", substr($tanggal, 3, 2));
+    	$tahun = substr($tanggal, 8, 2);
+
+    	$nomor = $this->get_last_nomor();
+
+    	if (is_null($nomor)) {
+        	$_nomor = 1;
+    	} else {
+        	$_nomor = $nomor + 1;
+    	}
+
+    	$sequence = sprintf("%07s", $_nomor);
+    	$formatnomor = "ANL" . $tahun . $bulan . $sequence;
+
+    	return $formatnomor;
+	}
+
+	function simpan_analisa($paramArray = false){
+
+		$hasil = $this->input->post('hasil');
+		$jam_analisa = $this->input->post('jam_analisa');
+		$material_analisa = $this->input->post('material_analisa');
+
+		if ( $this->input->post('input') ){
+			$input = implode("|",$this->input->post('input'))."|".$hasil;
+		}else{
+			$input = "";
+		}
+
+		if ($this->input->post('status') == '2'){
+			$status = 1;
+			$this->update_status_analisa_sebelumnya();
+		}else{
+			$status = $this->input->post('status');
+		}
+
+		if ($paramArray == true){
+
+			$nomorformulir = $this->get_nomor_formulir();
+            $data = array();
+            $param = implode("|",$this->input->post('parameter'));
+            
+			foreach ( $this->input->post('parameter') as $val ) {
+				$is_show = 0;
+				switch ($val) {
+					case 'P052': case 'P053': case 'P001': case 'P061': case 'P048': $hasil = $this->input->post('input')[0]; break;
+					case 'P054': case 'P002': case 'P062': case 'P049': $hasil = $this->input->post('input')[1]; break;
+					case 'P063': case 'P050': $hasil = $this->input->post('input')[2]; break;
+					case 'P064': $hasil = $this->input->post('input')[3]; break;
+					case 'P065': $hasil = $this->input->post('input')[4]; break;
+					case 'P066': $hasil = $this->input->post('input')[5]; break;
+					case 'P067': $hasil = $this->input->post('input')[6]; break;
+					case 'P068': $hasil = $this->input->post('input')[13]; break;
+					case 'P069': $hasil = $this->input->post('input')[14]; break;
+					case 'P070': $hasil = $this->input->post('input')[15]; break;
+					case 'P071': $hasil = $this->input->post('input')[16]; break;
+					case 'P072': $hasil = $this->input->post('input')[17]; break;
+					case 'P073': $hasil = $this->input->post('input')[18]; break;
+					case 'P018': $hasil = $this->input->post('input')[19]; break;
+					case 'P019': $hasil = $this->input->post('input')[20]; break;
+					case 'P074': $hasil = $this->input->post('input')[21]; break;
+					case 'P020': $hasil = $this->input->post('input')[22]; $is_show=1; break;
+                    case 'P004': case 'P043':  $this->input->post('hasil'); break;
+					default: $hasil = $this->input->post('hasil'); $is_show=1; break;
+				} //end switch
+
+				array_push($data,
+                    array(
+                            'nomor' => $nomorformulir,
+                            'tanggal' => date("Y-m-d"),
+                            'id_jam' => $this->input->post('jam_analisa'),
+                            'nilai_a' => $hasil,
+    					    'hasil' => $hasil,
+                            'id_user' => $this->session->userdata('id_user'),
+                            'id_parameter' => $val,
+                            'id_modul' => $this->input->post('id_modul'),
+                            'id_material' => $this->input->post('material_analisa'),
+                            'is_data' => $status,
+                            'no_strike' => $this->input->post('strike'),
+                            'input' => $input,
+                            'is_show' => $is_show,
+                            'param' => $param //tambah array param
+    				)
+                );
+
+
+			} //end foreach
+            
+            $insert = $this->db->insert_batch('hasil_analisa', $data);
+
+		}else{
+
+			$data = array(
+                    'nomor' => $this->get_nomor_formulir(),
+                    'tanggal' => date("Y-m-d"),
+                    'id_jam' => $this->input->post('jam_analisa'),
+                    'nilai_a' => $this->input->post('hasil'),
+                    'hasil' => $this->input->post('hasil'),
+                    'id_user' => $this->session->userdata('id_user'),
+                    'id_parameter' => $this->input->post('parameter'),
+                    'id_modul' => $this->input->post('id_modul'),
+                    'id_material' => $this->input->post('material_analisa'),
+                    'is_data' => $status,
+                    'no_strike' => $this->input->post('strike'),
+                    'input' => $input,
+                    'is_show' => 1
+			);
+
+			$insert = $this->db->insert('hasil_analisa', $data);
+		} // end else
+
+        if ( $insert ){ return true; }else{ return false; }
+
+	}
+
+	function get_analisa_by_id($id){
+
+		$this->db->select('*');
+		$this->db->where('id', $id);
+
+		$query = $this->db->get('hasil_analisa',1);
+
+		if ( $query->num_rows() == 1 )
+		{
+			return $query->row_array();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	function update_status_analisa_sebelumnya(){
+
+		$tanggal = date("Y-m-d");
+
+		$this->db->set('is_data', 2);
+
+		$this->db->where('id_jam', $this->input->post('jam_analisa') );
+		$this->db->where('id_parameter', $this->input->post('parameter') );
+		$this->db->where('id_modul', $this->input->post('id_modul') );
+		$this->db->where('id_material', $this->input->post('material_analisa'));
+		$this->db->where('tanggal', $tanggal);
+		$this->db->where('is_data', '1');
+
+		$this->db->update('hasil_analisa');
+
+	}
+
+	function get_analisa_by_parameter_and_item($param = ''){
+    
+    	$jam = $this->input->post('jam_analisa');
+    	$material = $this->input->post('material_analisa');
+    	$tanggal = date("Y-m-d");
+    
+    	$this->db->select('*');
+    	$this->db->where('id_parameter', $param);
+    	$this->db->where('id_jam', $jam );
+    	$this->db->where('id_material', $material);
+    	$this->db->where('tanggal', $tanggal);
+    	$this->db->where('is_data', '1');
+    
+    	$query = $this->db->get('hasil_analisa',1);
+    
+    	if ( $query->num_rows() == 1 )
+    	{
+    		return $query->row_array();
+    	}
+    	else
+    	{
+    		return false;
+    	}
+	}
+    
+    function show_analisa_verifikasi($param){
+        
+        $this->db->select('verifikasi.*,create.namalengkap as createby');
+        $this->db->join('users as create', 'create.id = verifikasi.id_user', 'inner');
+        $this->db->where('id_user',$this->session->userdata('id_user') );
+        $this->db->where('param',$param);
+        $this->db->order_by('verifikasi.nomor', 'DESC');        
+    
+    	$query = $this->db->get('verifikasi');
+        
+        return $query->result();
+    }
+    
+    function chek_verifikasi_detil_tmp($tgl,$jam,$param){
+        
+        $this->db->select('*');
+    	$this->db->where('tanggal', $tgl);
+    	$this->db->where('id_jam', $jam);
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user') );
+                
+    	$query = $this->db->get('verifikasi_detil_tmp',1);
+    
+    	if ( $query->num_rows() == 1 )
+    	{
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    
+    }
+    
+    function get_process_verifikasi_analisa_tmp($tgl,$jam,$jam2,$param){
+ 
+        $chek = $this->chek_verifikasi_detil_tmp($tgl,$jam,$param);
+        
+        if (!$chek){
+        
+            switch($param){
+                case 'mill': 
+                    $process = $this->db->query("select material.id_material,coalesce(analisa.id_parameter,'-') as parameter,coalesce(avg(analisa.hasil),0) as hasil
+                                                from (
+                                                	select * from material_analisa
+                                                	where (material_analisa.`urut_mill` is not null 
+                                                	or material_analisa.`urut_mill` != '') order by urut_mill asc 
+                                                ) as material
+                                                left join (	
+                                                	select 
+                                                	  material.id_material,material.name,analisa.`hasil`,jam.`id` as id_jam,jam.`desc`,analisa.`tanggal`,parameter.`id_parameter`,parameter.`nama_parameter`
+                                                	from
+                                                	  (select * from material_analisa 
+                                                	    where material_analisa.`urut_mill` is not null 
+                                                	    or material_analisa.`urut_mill` != ''
+                                                	   ) as material
+                                                	inner join hasil_analisa as analisa
+                                                	   on analisa.`id_material` = material.id and analisa.`is_data` = 1
+                                                	inner join jam_analisa as jam
+                                                	   on jam.`id` = analisa.`id_jam`
+                                                	inner join parameter_analisa as parameter
+                                                	   on parameter.`id_parameter` = analisa.`id_parameter` and parameter.`is_mill` = 1
+                                                	where jam.`desc` = '$jam' and analisa.`tanggal` = '$tgl'
+                                                	union all
+                                                	select 
+                                                	  material.id_material,material.name,analisa.`hasil`,jam.`id` as id_jam,jam.`desc`,analisa.`tanggal`,parameter.`id_parameter`,parameter.`nama_parameter`
+                                                	from
+                                                	  (select * from material_analisa 
+                                                	    where material_analisa.`urut_mill` is not null 
+                                                	    or material_analisa.`urut_mill` != ''
+                                                	   ) as material
+                                                	inner join hasil_analisa as analisa
+                                                	   on analisa.`id_material` = material.id and analisa.`is_data` = 1
+                                                	inner join jam_analisa as jam
+                                                	   on jam.`id` = analisa.`id_jam`
+                                                	inner join parameter_analisa as parameter
+                                                	   on parameter.`id_parameter` = analisa.`id_parameter`
+                                                	where jam.`desc` = '$jam2' and analisa.`tanggal` = '$tgl'
+                                                	and material.id_material in ('M001','M002','M005')
+                                                   ) as analisa
+                                                 on analisa.id_material = material.id_material
+                                                 group by material.id_material,analisa.id_parameter
+                                                 order by material.urut_mill asc");  
+                break;
+                case 'boiling':
+                    $process = $this->db->query("select material.id_material,coalesce(analisa.id_parameter,'-') as parameter,coalesce(avg(analisa.hasil),0) as hasil
+                                                from (
+                                                	select * from material_analisa
+                                                	where (material_analisa.`urut_boiling` is not null  
+                                                	or material_analisa.`urut_boiling` != '') order by urut_boiling asc 
+                                                ) as material
+                                                left join (	
+                                                	select 
+                                                	  material.id_material,material.name,analisa.`hasil`,jam.`id` as id_jam,jam.`desc`,analisa.`tanggal`,parameter.`id_parameter`,parameter.`nama_parameter`
+                                                	from
+                                                	  (select * from material_analisa 
+                                                	    where material_analisa.`urut_boiling` is not null 
+                                                	    or material_analisa.`urut_boiling` != ''
+                                                	   ) as material
+                                                	inner join hasil_analisa as analisa
+                                                	   on analisa.`id_material` = material.id and analisa.`is_data` = 1
+                                                	inner join jam_analisa as jam
+                                                	   on jam.`id` = analisa.`id_jam`
+                                                	inner join parameter_analisa as parameter
+                                                	   on parameter.`id_parameter` = analisa.`id_parameter` and parameter.`is_boiling` = 1
+                                                	where jam.`desc` = '$jam' and analisa.`tanggal` = '$tgl'
+                                                   ) as analisa
+                                                 on analisa.id_material = material.id_material
+                                                 group by material.id_material,analisa.id_parameter
+                                                 order by material.urut_boiling asc"); 
+                break;
+                case 'boiler':
+                    $process = $this->db->query("     SELECT material_analisa.id_material,material_analisa.name, 
+        COALESCE(hasil_analisa.id_parameter,'-') AS parameter 
+        ,COALESCE(AVG(hasil_analisa.hasil),0) AS hasil 
+        FROM  hasil_analisa 
+        INNER JOIN `parameter_analisa` 
+        ON (`hasil_analisa`.`id_parameter` = `parameter_analisa`.`id_parameter` AND 
+        `parameter_analisa`.`is_boiler` =1) 
+        INNER JOIN jam_analisa 
+        ON (jam_analisa.`id` = hasil_analisa.`id_jam` AND 
+        jam_analisa.`desc` = '$jam' AND hasil_analisa.`tanggal` = '$tgl') 
+        RIGHT JOIN material_analisa 
+        ON (`material_analisa`.`id`=`hasil_analisa`.`id_material`) 
+        WHERE material_analisa.`urut_boiler` IS NOT NULL 
+        GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+        ORDER BY material_analisa.urut_boiler ASC");  
+                break;
+
+                case 'evap':
+                    $process = $this->db->query("   SELECT 
+        material_analisa.id_material,
+        COALESCE(hasil_analisa.id_parameter,'-') AS parameter ,
+        COALESCE(AVG(hasil_analisa.hasil),0) AS hasil 
+        FROM 
+        hasil_analisa 
+        INNER JOIN `parameter_analisa` 
+        ON (`hasil_analisa`.`id_parameter` = `parameter_analisa`.`id_parameter` 
+        AND `parameter_analisa`.`is_evap` =1) 
+        INNER JOIN jam_analisa 
+        ON (jam_analisa.`id` = hasil_analisa.`id_jam` 
+        AND jam_analisa.`desc` = '$jam' AND hasil_analisa.`tanggal` = '$tgl') 
+        RIGHT JOIN material_analisa 
+        ON (`material_analisa`.`id`=`hasil_analisa`.`id_material`) 
+        WHERE material_analisa.`urut_evap` IS NOT NULL 
+        GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+        ORDER BY material_analisa.urut_evap ASC");  
+                break;
+                case 'water':
+                    $process = $this->db->query("       SELECT 
+        material_analisa.id_material,
+        COALESCE(hasil_analisa.id_parameter,'-') AS parameter ,
+        COALESCE(AVG(hasil_analisa.hasil),0) AS hasil 
+        FROM 
+        hasil_analisa 
+        INNER JOIN `parameter_analisa` 
+        ON (`hasil_analisa`.`id_parameter` = `parameter_analisa`.`id_parameter` 
+        AND `parameter_analisa`.`is_water` =1) 
+        INNER JOIN jam_analisa 
+        ON (jam_analisa.`id` = hasil_analisa.`id_jam` 
+        AND jam_analisa.`desc` = '$jam' AND hasil_analisa.`tanggal` = '$tgl') 
+        RIGHT JOIN material_analisa 
+        ON (`material_analisa`.`id`=`hasil_analisa`.`id_material`) 
+        WHERE material_analisa.`urut_water` IS NOT NULL 
+        GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+        ORDER BY material_analisa.urut_water ASC"); 
+                break;
+                 case 'machine':
+                    $process = $this->db->query("SELECT material_analisa.id_material,material_analisa.name, 
+        COALESCE(hasil_analisa.id_parameter,'-') AS parameter 
+        ,COALESCE(AVG(hasil_analisa.hasil),0) AS hasil 
+        FROM  hasil_analisa 
+        INNER JOIN `parameter_analisa` 
+        ON (`hasil_analisa`.`id_parameter` = `parameter_analisa`.`id_parameter` AND 
+        `parameter_analisa`.`is_machine` =1) 
+        INNER JOIN jam_analisa 
+        ON (jam_analisa.`id` = hasil_analisa.`id_jam` AND 
+        jam_analisa.`desc` = '$jam' AND hasil_analisa.`tanggal` = '$tgl') 
+        RIGHT JOIN material_analisa 
+        ON (`material_analisa`.`id`=`hasil_analisa`.`id_material`) 
+        WHERE material_analisa.`urut_machine` IS NOT NULL 
+        GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+        ORDER BY material_analisa.urut_machine ASC");  
+                break;
+                case 'batch':
+                $process = $this->db->query("SELECT 
+                t.id ,
+                t.id_material ,
+                t.name ,
+                t.no_strike ,
+                t.time_strike ,
+                t.pan_strike ,
+                t.boiling_time_strike ,
+                t.vol_strike ,
+                CASE WHEN MAX(t.brix) = 0 THEN MIN(t.brix) ELSE MAX(t.brix) END AS brix ,
+                CASE WHEN MAX(t.pol) = 0 THEN MIN(t.pol) ELSE MAX(t.pol) END AS pol 
+                FROM( 
+                SELECT 
+                material_analisa.id ,
+                material_analisa.id_material ,
+                material_analisa.name ,
+                CASE WHEN hasil_analisa.id_parameter='P001' THEN hasil ELSE 0 END AS brix ,
+                CASE WHEN hasil_analisa.id_parameter='P002' THEN hasil ELSE 0 END AS pol ,
+                COALESCE(AVG(hasil_analisa.no_strike),0) AS no_strike ,
+                COALESCE(AVG(hasil_analisa.time_strike),0) AS time_strike ,
+                COALESCE(AVG(hasil_analisa.pan_strike),0) AS pan_strike ,
+                COALESCE(AVG(hasil_analisa.boiling_time_strike),0) AS boiling_time_strike ,
+                COALESCE(AVG(hasil_analisa.vol_strike),0) AS vol_strike 
+                FROM hasil_analisa 
+                INNER JOIN parameter_analisa 
+                ON (hasil_analisa.id_parameter = parameter_analisa.id_parameter 
+                AND parameter_analisa.is_batch =1)
+                INNER JOIN jam_analisa 
+                ON (jam_analisa.id = hasil_analisa.id_jam 
+                AND jam_analisa.desc = '$jam' 
+                AND hasil_analisa.tanggal = '$tgl') 
+                RIGHT JOIN material_analisa 
+                ON (material_analisa.id=hasil_analisa.id_material) 
+                WHERE material_analisa.urut_batch IS NOT NULL 
+                GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+                ORDER BY material_analisa.urut_batch ASC) AS t GROUP BY t.id_material");
+                        $hasil =  $process->result();  
+                        $parameter=array("P001","P002","P079","P080","P081","P082","P083");
+                        $data = array();
+                        for($i=0;$i<count($hasil);$i++) {
+                            $n=0;
+                             foreach( $parameter as $val ){
+                                switch ($n) {
+                                        case 0:
+                                        $nilai=$hasil[$i]->brix;
+                                        break;
+                                        case 1:
+                                        $nilai=$hasil[$i]->pol;
+                                        break;
+                                        case 2:
+                                        $nilai=$hasil[$i]->time_strike;
+                                        break;
+                                        case 3:
+                                        $nilai=$hasil[$i]->no_strike;
+                                        break;
+                                        case 4:
+                                        $nilai=$hasil[$i]->pan_strike;
+                                        break;
+                                        case 5:
+                                        $nilai=$hasil[$i]->boiling_time_strike;
+                                        break;
+                                        case 6:
+                                        $nilai=$hasil[$i]->vol_strike;
+                                        break; 
+                                        default:
+                                        # code...
+                                        break;
+                                }
+                               // echo $param;
+                                array_push($data,
+                                    array(
+                                        'id_material' => $hasil[$i]->id_material,
+                                        'id_parameter' => $val,
+                                        'id_jam' => $jam,
+                                        'id_user' => $this->session->userdata('id_user'),
+                                        'tanggal' => $tgl,
+                                        'hasil_awal' => $nilai,
+                                        'hasil' => $nilai,
+                                        'param' => $param
+                                      )
+                                );
+                                $n++;
+                            }
+                        }
+                        $this->db->insert_batch('verifikasi_detil_tmp', $data);
+                        $result = $this->select_from_temp($tgl,$jam,$param);
+        
+                        return $result;      
+                break;
+                case 'sugar': 
+                $chek = $this->chek_verifikasi_detil_tmp_per_date($tgl,$param);
+                if(!$chek){
+                    $process = $this->db->query("SELECT 
+                t.id_material AS id_material,
+                t.parameter AS id_parameter,
+                t.id_jam AS id_jam,
+                t.tanggal AS tanggal,
+                t.no_strike AS no_strike,
+                CASE WHEN MAX(t.hasil) = 0 THEN MIN(t.hasil) ELSE MAX(t.hasil) END AS hasil 
+                FROM (
+                SELECT 
+                material_analisa.id_material AS id_material,
+                COALESCE(parameter_analisa.id_parameter,'-') AS parameter,
+                hasil_analisa.id_parameter AS id_parameter2,
+                hasil_analisa.id_jam AS id_jam,
+                hasil_analisa.tanggal AS tanggal,
+                CASE WHEN parameter_analisa.id_parameter = hasil_analisa.id_parameter 
+                AND hasil_analisa.id_material = '39' THEN COALESCE(AVG(hasil_analisa.hasil),0) ELSE 0 END AS hasil,
+                COALESCE(hasil_analisa.no_strike,0) AS no_strike 
+                FROM ((parameter_analisa 
+                LEFT JOIN hasil_analisa 
+                ON(parameter_analisa.id_parameter IN ('P013','P014','P008','P002','P018','P019','P020','P021','P022','P084','P085','P086','P080'))) 
+                LEFT JOIN material_analisa ON(material_analisa.id = hasil_analisa.id_material)) 
+                WHERE hasil_analisa.id_parameter IN ('P013','P014','P008','P002','P018','P019','P020','P021','P022','P084','P085','P086','P080') 
+                AND hasil_analisa.id_material = '39' and tanggal= '$tgl'
+                GROUP BY parameter_analisa.id_parameter,hasil_analisa.id_parameter,hasil_analisa.id_jam) t 
+                GROUP BY t.parameter,t.id_jam ORDER BY t.id_jam");
+                    $hasil =  $process->result();                          
+                    $data = array();  
+                    for($i=0;$i<count($hasil);$i++) {
+                               switch ($hasil[$i]->id_parameter) {
+                                   case 'P080':
+                                    array_push($data,
+                                    array(
+                                        'id_material' => $hasil[$i]->id_material,
+                                        'id_parameter' => $hasil[$i]->id_parameter,
+                                        'id_jam' => $hasil[$i]->no_strike,
+                                        'id_user' => $this->session->userdata('id_user'),
+                                        'tanggal' => $tgl,
+                                        'hasil_awal' => $hasil[$i]->no_strike,
+                                        'hasil' => $hasil[$i]->no_strike,
+                                        'param' => $param
+                                      )
+                                );
+                                       break; 
+                                   default:
+                                        array_push($data,
+                                        array(
+                                        'id_material' => $hasil[$i]->id_material,
+                                        'id_parameter' => $hasil[$i]->id_parameter,
+                                        'id_jam' => $hasil[$i]->no_strike,
+                                        'id_user' => $this->session->userdata('id_user'),
+                                        'tanggal' => $tgl,
+                                        'hasil_awal' => $hasil[$i]->hasil,
+                                        'hasil' => $hasil[$i]->hasil,
+                                        'param' => $param
+                                      )
+                                );
+                                       break;
+                               } 
+                        }
+                          if(count($data)>0){ 
+                        $this->db->insert_batch('verifikasi_detil_tmp', $data);
+                        }
+                    }
+                          $result = $this->select_from_temp_sugar($tgl,$param); 
+                        return $result;                      
+                break;
+                case 'mollasses': 
+                $chek = $this->chek_verifikasi_detil_tmp_per_date($tgl,$param); 
+                if(!$chek){
+                    $process = $this->db->query("SELECT  
+                    t.id_material AS id_material,
+                    t.parameter AS id_parameter,
+                    t.id_jam AS id_jam,
+                    t.tanggal AS tanggal,
+                    CASE WHEN MAX(t.hasil) = 0 THEN MIN(t.hasil) ELSE MAX(t.hasil) END AS hasil
+                     FROM (
+                     SELECT material_analisa.id_material AS id_material,
+                     COALESCE(parameter_analisa.id_parameter,'-') AS parameter,
+                     jam_analisa.desc AS id_jam,
+                     hasil_analisa.tanggal AS tanggal,
+                     CASE WHEN material_analisa.id = hasil_analisa.id_material 
+                     AND parameter_analisa.id_parameter = 'P027' THEN COALESCE(AVG(hasil_analisa.hasil),0) 
+                     ELSE 0 END AS 
+                     hasil 
+                     FROM 
+                     (((material_analisa LEFT JOIN 
+                     hasil_analisa 
+                     ON(material_analisa.id IN ('140','141','142','143','176','145'))) 
+                     LEFT JOIN parameter_analisa 
+                     ON(parameter_analisa.id_parameter = hasil_analisa.id_parameter)) 
+                     LEFT JOIN jam_analisa ON(jam_analisa.id = hasil_analisa.id_jam)) 
+                     WHERE hasil_analisa.id_material IN ('140','141','142','143','176','145') AND tanggal='$tgl'
+                     AND parameter_analisa.id_parameter = 'P027' 
+                     GROUP BY material_analisa.id,hasil_analisa.id_material 
+                     ORDER BY material_analisa.id) t 
+                     GROUP BY t.id_material,t.id_jam 
+                     ORDER BY t.id_jam,t.id_material");
+                    $hasil =  $process->result();          
+                    $data = array(); 
+                    for($i=0;$i<count($hasil);$i++) { 
+                                        array_push($data,
+                                        array(
+                                        'id_material' => $hasil[$i]->id_material,
+                                        'id_parameter' => $hasil[$i]->id_parameter,
+                                        'id_jam' => $hasil[$i]->id_jam,
+                                        'id_user' => $this->session->userdata('id_user'),
+                                        'tanggal' => $tgl,
+                                        'hasil_awal' => $hasil[$i]->hasil,
+                                        'hasil' => $hasil[$i]->hasil,
+                                        'param' => $param
+                                      )
+                                ); 
+                        }
+
+                     if(count($data)>0){ 
+                        $this->db->insert_batch('verifikasi_detil_tmp', $data);
+                        }
+                        }
+                        $result = $this->select_from_temp_sugar($tgl,$param); 
+                        return $result;                      
+                break;
+                case 'floculant':
+                    $process = $this->db->query("   SELECT 
+                material_analisa.id_material,
+                COALESCE(hasil_analisa.id_parameter,'-') AS parameter ,
+                COALESCE(AVG(hasil_analisa.hasil),0) AS hasil 
+                FROM 
+                hasil_analisa 
+                INNER JOIN `parameter_analisa` 
+                ON (`hasil_analisa`.`id_parameter` = `parameter_analisa`.`id_parameter` 
+                AND `parameter_analisa`.`is_floculant` =1) 
+                INNER JOIN jam_analisa 
+                ON (jam_analisa.`id` = hasil_analisa.`id_jam` 
+                AND jam_analisa.`desc` = '$jam' AND hasil_analisa.`tanggal` = '$tgl') 
+                RIGHT JOIN material_analisa 
+                ON (`material_analisa`.`id`=`hasil_analisa`.`id_material`) 
+                WHERE material_analisa.`urut_floculant` IS NOT NULL 
+                GROUP BY material_analisa.id_material,hasil_analisa.id_parameter 
+                ORDER BY material_analisa.urut_floculant ASC");
+                                             
+                break; 
+            }
+            
+            $hasil =  $process->result(); 
+            $data = array();
+            
+            foreach( $hasil as $val ){
+                array_push($data,
+            		array(
+                        'id_material' => $val->id_material,
+                        'id_parameter' => $val->parameter,
+                        'id_jam' => $jam,
+                        'id_user' => $this->session->userdata('id_user'),
+                        'tanggal' => $tgl,
+                        'hasil_awal' => $val->hasil,
+                        'hasil' => $val->hasil,
+                        'param' => $param
+                      )
+                );
+            }
+            
+             $this->db->insert_batch('verifikasi_detil_tmp', $data);
+        
+        }
+        
+        $result = $this->select_from_temp($tgl,$jam,$param);
+        
+        return $result;
+    }
+    
+    private function select_from_temp($tgl,$jam,$param){
+        
+         // select from temporary
+        $this->db->select('verifikasi_detil_tmp.*,material_analisa.name');
+        $this->db->from('verifikasi_detil_tmp');
+        $this->db->join('material_analisa', 'material_analisa.id_material = verifikasi_detil_tmp.id_material', 'inner');
+    	$this->db->where('tanggal', $tgl);
+    	$this->db->where('id_jam', $jam);
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user') );
+        
+        switch ($param){
+            case 'mill':
+                $this->db->order_by('material_analisa.urut_mill', 'asc');
+            break;
+            case 'boiling':
+                $this->db->order_by('material_analisa.urut_boiling', 'asc');
+            break;
+        }
+    
+    	$query = $this->db->get();
+        
+        return $query->result();
+    }
+
+       private function select_from_temp_sugar($tgl,$param){
+        
+         // select from temporary
+        $this->db->select('verifikasi_detil_tmp.*,material_analisa.name');
+        $this->db->from('verifikasi_detil_tmp');
+        $this->db->join('material_analisa', 'material_analisa.id_material = verifikasi_detil_tmp.id_material', 'inner');
+        $this->db->where('tanggal', $tgl); 
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user') );
+        
+        switch ($param){
+            case 'mill':
+                $this->db->order_by('material_analisa.urut_mill', 'asc');
+            break;
+            case 'boiling':
+                $this->db->order_by('material_analisa.urut_boiling', 'asc');
+            break;
+        }
+    
+        $query = $this->db->get();
+        
+        return $query->result();
+    }
+    
+    function get_material($param){
+        
+        switch($param){
+            case 'mill':
+                $urut = "urut_mill";
+            break;
+            case 'boiling':
+                $urut = "urut_boiling";
+            break;
+            case 'boiler':
+                $urut = "urut_boiler";
+            break;
+            case 'water':
+                $urut = "urut_water";
+            break;
+            case 'evap':
+                $urut = "urut_evap";
+            break;
+            case 'batch':
+                $urut = "urut_batch";
+            break;
+            case 'floculant':
+                $urut = "urut_floculant";
+            break;
+            case 'machine':
+                $urut = "urut_machine";
+            break;
+            default:
+                $urut = "";
+            break;
+        }
+        
+        $query = $this->db->query("select * from material_analisa where (material_analisa.`$urut` is not null 
+               	            or material_analisa.`$urut` != '') order by $urut asc");
+        
+        return $query->result();
+    }
+    
+    function update_verifikasi_tmp(){
+        
+        $id = $this->input->post('id');
+        $hasil = $this->input->post('hasil');
+        
+        $this->db->set('hasil', $hasil);
+        $this->db->where('id', $id );
+
+		$update = $this->db->update('verifikasi_detil_tmp');
+        
+        if ($update){return true;}else{return false;};
+    }
+    
+    function chek_verifikasi($tgl,$jam,$param){
+        
+        $this->db->select('*');
+        $this->db->where('id_jam', $jam);
+    	$this->db->where('tanggal', $tgl);
+        $this->db->where('param',$param);
+    
+    	$query = $this->db->get('verifikasi',1);
+    
+    	if ( $query->num_rows() == 1 )
+    	{
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+        
+    }
+//check verifikasi data untuk sugar_product RIZKI
+        function chek_verifikasi_sugar($tgl ,$param){
+        
+        $this->db->select('*'); 
+        $this->db->where('tanggal', $tgl);
+        $this->db->where('param',$param);
+    
+        $query = $this->db->get('verifikasi',1);
+    
+        if ( $query->num_rows() == 1 )
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+        
+    }
+    
+    function get_last_nomor_verifikasi()
+    {
+    	$tanggal = date("d-m-Y");
+    	$bulan = sprintf("%02s", substr($tanggal, 3, 2));
+    	$tahun = substr($tanggal, 6, 4);
+
+    	$query = $this->db->query("select max(right(nomor,7)) as last, nomor from verifikasi
+                                    where month(tanggal)='$bulan' and year(tanggal)='$tahun'");
+
+    	$nomor = $query->row()->last;
+    	return $nomor;
+    }
+
+	function get_nomor_formulir_verifikasi(){
+
+        $tanggal = date("d-m-Y");
+
+    	$bulan = sprintf("%02s", substr($tanggal, 3, 2));
+    	$tahun = substr($tanggal, 8, 2);
+
+    	$nomor = $this->get_last_nomor_verifikasi();
+
+    	if (is_null($nomor)) {
+        	$_nomor = 1;
+    	} else {
+        	$_nomor = $nomor + 1;
+    	}
+
+    	$sequence = sprintf("%07s", $_nomor);
+    	$formatnomor = "VRF" . $tahun . $bulan . $sequence;
+
+    	return $formatnomor;
+	}
+    
+    function simpan_verifikasi(){
+        
+        $jam = $this->input->post('jam');
+        $tgl = $this->input->post('tgl');
+        $param = $this->input->post('param');
+        
+        $nomorformulir = $this->get_nomor_formulir_verifikasi();
+        
+        //create header verifikasi
+        $data_header = array(
+                    'nomor' => $nomorformulir,
+                    'tanggal' => $tgl,
+                    'id_jam' => $jam,
+                    'id_user' => $this->session->userdata('id_user'),
+                    'param' => $param
+			);
+            
+        $this->db->insert('verifikasi', $data_header);
+        $id_verifikasi =  $this->db->insert_id();
+        
+        if ($id_verifikasi){
+            
+            //get tmp
+            $this->db->select('*');
+            $this->db->from('verifikasi_detil_tmp');
+            $this->db->where('id_jam',$jam);
+            $this->db->where('tanggal',$tgl);
+            $this->db->where('id_user',$this->session->userdata('id_user'));
+            $this->db->where('param',$param);
+            
+            $get_tmp = $this->db->get();
+            $tmp =  $get_tmp->result();
+                
+            $data = array();
+            
+            foreach( $tmp as $val ){
+                array_push($data,
+            		array(
+                        'id_verifikasi'=> $id_verifikasi,
+                        'id_material' => $val->id_material,
+                        'id_parameter' => $val->id_parameter,
+                        'id_jam' => $val->id_jam,
+                        'id_user' => $val->id_user,
+                        'tanggal' => $val->tanggal,
+                        'hasil_awal' => $val->hasil,
+                        'hasil' => $val->hasil,
+                        'param' => $val->param
+                      )
+                );
+            }
+                
+            $inset_detil = $this->db->insert_batch('verifikasi_detil', $data);
+        }
+        
+        if (!$inset_detil){
+            $this->db->where('id', $id_verifikasi);
+            $this->db->delete('verifikasi');
+        }
+        
+        if ($id_verifikasi && $inset_detil ){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    
+    function get_verifikasi_analisa_by_id($id){
+        
+        $this->db->select('verifikasi_detil.*,material_analisa.name');
+        $this->db->from('verifikasi_detil');
+        $this->db->join('material_analisa', 'material_analisa.id_material = verifikasi_detil.id_material', 'inner');
+    	$this->db->where('verifikasi_detil.id_verifikasi', $id);
+        $this->db->order_by('material_analisa.urut_mill', 'asc');
+    
+    	$query = $this->db->get();
+     
+        return $query->result();
+        
+    }
+    
+    function get_header_verifikasi_by_id($id){
+        
+        $this->db->select('*');
+        $this->db->where('id', $id);
+    	$query = $this->db->get('verifikasi',1);
+    
+    	if ( $query->num_rows() == 1 )
+    	{
+    		return $query->row_array();
+    	}
+    	
+    }
+    
+    function batal_verifikasi(){
+        
+        $jam = $this->input->post('jam');
+        $tgl = $this->input->post('tgl');
+        $param = $this->input->post('param');
+        
+        $this->db->where('id_jam', $jam);
+        $this->db->where('tanggal', $tgl);
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user'));
+        $batal = $this->db->delete('verifikasi_detil_tmp');
+        
+        if($batal){return true;}else{return false;}
+    }
+
+//delete data verifikasi per tanggal untuk sugar & molasses RIZKI
+        function batal_verifikasi_perdate(){
+         
+        $tgl = $this->input->post('tgl');
+        $param = $this->input->post('param');
+         
+        $this->db->where('tanggal', $tgl);
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user'));
+        $batal = $this->db->delete('verifikasi_detil_tmp');
+        
+        if($batal){return true;}else{return false;}
+    }
+   
+   //simpans data verifikasi per tanggal untuk sugar & molasses RIZKI
+       function simpan_verifikasi_perdate(){
+         
+        $tgl = $this->input->post('tgl');
+        $param = $this->input->post('param');
+        
+        $nomorformulir = $this->get_nomor_formulir_verifikasi();
+        
+        //create header verifikasi
+        $data_header = array(
+                    'nomor' => $nomorformulir,
+                    'tanggal' => $tgl,
+                    'id_jam' => '-',
+                    'id_user' => $this->session->userdata('id_user'),
+                    'param' => $param
+            );
+            
+        $this->db->insert('verifikasi', $data_header);
+        $id_verifikasi =  $this->db->insert_id();
+        
+        if ($id_verifikasi){
+            
+            //get tmp
+            $this->db->select('*');
+            $this->db->from('verifikasi_detil_tmp'); 
+            $this->db->where('tanggal',$tgl);
+            $this->db->where('id_user',$this->session->userdata('id_user'));
+            $this->db->where('param',$param);
+            
+            $get_tmp = $this->db->get();
+            $tmp =  $get_tmp->result();
+                
+            $data = array();
+            
+            foreach( $tmp as $val ){
+                array_push($data,
+                    array(
+                        'id_verifikasi'=> $id_verifikasi,
+                        'id_material' => $val->id_material,
+                        'id_parameter' => $val->id_parameter,
+                        'id_jam' => $val->id_jam,
+                        'id_user' => $val->id_user,
+                        'tanggal' => $val->tanggal,
+                        'hasil_awal' => $val->hasil,
+                        'hasil' => $val->hasil,
+                        'param' => $val->param
+                      )
+                );
+            }
+                
+            $inset_detil = $this->db->insert_batch('verifikasi_detil', $data);
+        }
+        
+        if (!$inset_detil){
+            $this->db->where('id', $id_verifikasi);
+            $this->db->delete('verifikasi');
+        }
+        
+        if ($id_verifikasi && $inset_detil ){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    function chek_verifikasi_detil_tmp_per_date($tgl,$param){
+        
+        $this->db->select('*');
+        $this->db->where('tanggal', $tgl); 
+        $this->db->where('param', $param);
+        $this->db->where('id_user', $this->session->userdata('id_user') );
+                
+        $query = $this->db->get('verifikasi_detil_tmp',1);
+    
+        if ( $query->num_rows() == 1 )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    
+    }
+//get data parameter by material untuk boiler RIZKI
+    function get_parameter($param){  
+        $query = $this->db->query("SELECT * FROM parameter_analisa WHERE $param=1"); 
+        return $query->result();
+    }
+
+      function set_data(){  
+        $parameter=$this->db->query("SELECT id_parameter FROM parameter_analisa");
+        $hasil =  $parameter->result();          
+        $materia=$this->db->query("SELECT id FROM material_analisa");
+        $hasil2 =  $materia->result();  
+                    $data = array();
+        $n=1;
+       for($x=0;$x<count($hasil2);$x++) { 
+        for($i=0;$i<count($hasil);$i++) {
+
+                                        array_push($data,
+                                        array(
+                                        'id_material' => $hasil2[$x]->id,
+                                        'id_parameter' => $hasil[$i]->id_parameter,
+                                        'id_jam' => '4',
+                                        'id_user' => $this->session->userdata('id_user'),
+                                        'tanggal' => '2020-07-06', 
+                                        'hasil' => rand(2,100), 
+                                        'no_strike' => $n, 
+                                        'time_strike' => $n+1, 
+                                        'pan_strike' => $n+2, 
+                                        'boiling_time_strike' => $n+3, 
+                                        'vol_strike' => $n+4, 
+                                      )
+                                ); 
+
+                                        echo 'data :'. $hasil2[$x]->id.'|'.$hasil[$i]->id_parameter.'</br>';
+                        }
+                         if($n<=15){
+                                            $n=$n+1;
+                                        }else{
+                                            $n=0;
+                                        }
+                    }
+                     $this->db->insert_batch('hasil_analisa', $data);
+                     echo 'data :'.count($data);
+    }
+
+ }

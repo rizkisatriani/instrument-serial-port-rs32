@@ -1,0 +1,59 @@
+<?php
+
+class Reportdailycondensor_model extends CI_Model
+{
+    function __construct()
+    {
+        parent:: __construct();
+
+    }
+
+    function get_data_t2(  $date ){  
+        $query = $this->db->query('SELECT * FROM water_condensate_report_tb_2  WHERE tanggal="'.$date.'";'); 
+        return $query->result();
+    }
+
+    function get_data_t3(  $date ){  
+        $query = $this->db->query('SELECT * FROM water_condensate_report_tb_3  WHERE tanggal="'.$date.'";'); 
+        return $query->result();
+    }
+       function get_data_t4(  $date ){  
+        $query = $this->db->query('SELECT * FROM water_condensate_report_tb_4  WHERE tanggal="'.$date.'";'); 
+        return $query->result();
+    }
+
+     function get_data_count(   $date ){  
+        $query = $this->db->query('SELECT  id_jam FROM water_condensate_report_tb_2  WHERE tanggal="'.$date.'" GROUP BY id_jam'); 
+        return $query->result();
+    }
+
+        function get_headers($param){
+        
+        switch($param){
+            case '1':
+                $urut = "urut_water";
+                $IN="id_material IN('M051','M052','M053','M054','M055','M056','M062','M063','M064','M068','M069')";
+            break;
+            case '2':
+                $urut = "urut_water";
+                $IN="id_material IN ('M070','M071','M072','M073','M074','M075','M076','M077','M078','M079','M080')";
+            break;
+            case '3':
+                $urut = "urut_water";
+                $IN="id_material IN ('M081','M082','M083','M084','M085','M086','M087','M088','M065','M066')";
+            break;
+            case 'evap':
+                $urut = "urut_evap";
+            break;
+            default:
+                $urut = "";
+            break;
+        }
+        
+        $query = $this->db->query("select * from material_analisa where $IN order by $urut asc");
+        
+        return $query->result();
+    }
+
+}
+ ?>

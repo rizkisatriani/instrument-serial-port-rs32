@@ -1,0 +1,359 @@
+<?php
+
+  $date = date("M Y");
+
+ ?>
+<div class="row border-bottom bd-lightGrayBlue m-3">
+   <!--Breadcrubs -->
+   <div class='cell-md-10 text-left d-flex flex-justify-left flex-justify-left-md'>
+     <ul class="breadcrumbsCustom bg-transparent">
+             <li class="page-item"><a href="#" class="page-link"><span class="mif-meter"></span></a></li>
+             <li class='page-item'><a class='page-link'>Home</a></li>
+             <li class="page-item"><a href="#" class="page-link">Dashboard</a></li>
+     </ul>
+    </div>
+    <div class='cell-md-2 text-center text-end-md'>
+      <span id='jam'></span>
+    </div>
+</div>
+<!--isi Page Conten disini -->
+<div class="m-3">
+   <div class="panel mt-4" id="70d8d9f2-dc1a-4d2f-a32d-1768688063ba">
+       <div data-role="panel" data-title-caption="Monthly Recap Report" data-collapsible="true" data-title-icon="<span class='mif-chart-line'></span>" class="panel-content" data-role-panel="true">
+           <div class="row">
+               <div class="cell-md-8 p-10"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                   <h5 class="text-center">TOP 5 Analysis</h5>
+                   <canvas id="dashboardChart1" style="display: block; width: 620px; height: 310px;" width="620" height="310" class="chartjs-render-monitor"></canvas>
+               </div>
+               <div class="cell-md-4 p-10">
+                 <h5 class="text-center">Completed Data</h5>
+                  <canvas id="dashboardChart2" style="display: block; width: 620px; height: 310px;" width="620" height="600" class="chartjs-render-monitor"></canvas>
+                    <!--
+                   <h5 class="text-center">Goal Completion</h5>
+                   <div class="mt-6">
+                       <div class="clear">
+                           <div class="place-left">Add Products to Cart</div>
+                           <div class="place-right"><strong>160</strong>/200</div>
+                       </div>
+                       <div data-role="progress" data-value="35" data-cls-bar="bg-cyan" class="progress" data-role-progress="true"><div class="bar bg-cyan" style="width: 35%;"></div></div>
+                   </div>
+                   <div class="mt-6">
+                       <div class="clear">
+                           <div class="place-left">Complete Purchase</div>
+                           <div class="place-right"><strong>310</strong>/400</div>
+                       </div>
+                       <div data-role="progress" data-value="35" data-cls-bar="bg-red" class="progress" data-role-progress="true"><div class="bar bg-red" style="width: 35%;"></div></div>
+                   </div>
+                   <div class="mt-6">
+                       <div class="clear">
+                           <div class="place-left">Visit Premium Page</div>
+                           <div class="place-right"><strong>480</strong>/800</div>
+                       </div>
+                       <div data-role="progress" data-value="35" class="progress" data-role-progress="true"><div class="bar" style="width: 35%;"></div></div>
+                   </div>
+                   <div class="mt-6">
+                       <div class="clear">
+                           <div class="place-left">Send Inquiries</div>
+                           <div class="place-right"><strong>250</strong>/500</div>
+                       </div>
+                       <div data-role="progress" data-value="35" data-cls-bar="bg-orange" class="progress" data-role-progress="true"><div class="bar bg-orange" style="width: 35%;"></div></div>
+                   </div>
+                   <div class="mt-6">
+                       <p class="text-small">Cum brodium resistere, omnes spatiies perdere varius, magnum lanistaes.</p>
+                   </div>
+                 -->
+               </div>
+           </div>
+           <hr>
+           <!--
+           <div class="row">
+               <div class="cell-lg-3 cell-sm-6 text-center mt-4">
+                   <div class="fg-green"><span class="mif-arrow-drop-up"></span>17%</div>
+                   <div class="text-bold">$35,210.43</div>
+                   <div class="text-upper">TOTAL REVENUE</div>
+               </div>
+               <div class="cell-lg-3 cell-sm-6 text-center mt-4">
+                   <div class="fg-orange"><span class="">=</span>0</div>
+                   <div class="text-bold">$10,390.90</div>
+                   <div class="text-upper">TOTAL COST</div>
+               </div>
+               <div class="cell-lg-3 cell-sm-6 text-center mt-4">
+                   <div class="fg-green"><span class="mif-arrow-drop-up"></span>20%</div>
+                   <div class="text-bold">$24,813.53</div>
+                   <div class="text-upper">TOTAL PROFIT</div>
+               </div>
+               <div class="cell-lg-3 cell-sm-6 text-center mt-4">
+                   <div class="fg-red"><span class="mif-arrow-drop-down"></span>18%</div>
+                   <div class="text-bold">1,200</div>
+                   <div class="text-upper">GOAL COMPLETIONS</div>
+               </div>
+           </div>-->
+       </div>
+       <div class="panel-title"><span class="caption">Monthly Recap Report</span><span class="mif-chart-line icon"></span><span class="dropdown-toggle marker-center active-toggle"></span>
+       </div>
+   </div>
+   <!--
+   <div class="row">
+       <div class="cell-lg-3 cell-md-6 mt-2">
+           <div class="more-info-box bg-cyan fg-white">
+               <div class="content">
+                   <h2 class="text-bold mb-0">150</h2>
+                   <div>New Orders</div>
+               </div>
+               <div class="icon">
+                   <span class="mif-cart"></span>
+               </div>
+               <a href="#" class="more"> More info <span class="mif-arrow-right"></span></a>
+           </div>
+       </div>
+       <div class="cell-lg-3 cell-md-6 mt-2">
+           <div class="more-info-box bg-green fg-white">
+               <div class="content">
+                   <h2 class="text-bold mb-0">53%</h2>
+                   <div>Bounce Rate</div>
+               </div>
+               <div class="icon">
+                   <span class="mif-chart-bars"></span>
+               </div>
+               <a href="#" class="more"> More info <span class="mif-arrow-right"></span></a>
+           </div>
+       </div>
+       <div class="cell-lg-3 cell-md-6 mt-2">
+           <div class="more-info-box bg-orange fg-white">
+               <div class="content">
+                   <h2 class="text-bold mb-0">44</h2>
+                   <div>New Registrations</div>
+               </div>
+               <div class="icon">
+                   <span class="mif-user-plus"></span>
+               </div>
+               <a href="#" class="more"> More info <span class="mif-arrow-right"></span></a>
+           </div>
+       </div>
+       <div class="cell-lg-3 cell-md-6 mt-2">
+           <div class="more-info-box bg-red fg-white">
+               <div class="content">
+                   <h2 class="text-bold mb-0">10,000</h2>
+                   <div>Unique Visitors</div>
+               </div>
+               <div class="icon">
+                   <span class="mif-user-check"></span>
+               </div>
+               <a href="#" class="more"> More info <span class="mif-arrow-right"></span></a>
+           </div>
+       </div>
+   </div>
+</div>
+<!--end Page Conten-->
+<script src="<?php echo base_url(); ?>assets/js/charts.js"></script>
+<script >
+
+  var serverTime = new Date(<?php print date('Y, m, d, H, i, s, 0'); ?>)
+  var	clientTime = new Date();
+  var	Diff = serverTime.getTime() - clientTime.getTime();
+
+  var baseURL = $('body').data('baseurl');
+  var nama = [];
+  var alldata = [];
+  var newdata = [];
+  var rechekdata = [];
+  var testdata = [];
+
+  $(document).ready(function(){
+
+    setInterval(function() { show_waktu(); },50);
+
+    $.get('site/show_count_analysis_by_module', function(data, status){
+      var obj = JSON.parse(data, function (key, value) {
+        if (key == 'nama'){
+          nama.push(value);
+        }
+        if (key == 'jumlah'){
+          alldata.push(parseInt(value));
+        }
+        if (key == 'baru'){
+          newdata.push(parseInt(value));
+        }
+        if (key == 'ricek'){
+          rechekdata.push(parseInt(value));
+        }
+        if (key == 'test'){
+          testdata.push(parseInt(value));
+        }
+      });
+      show_chart();
+      pie_chart();
+    });
+
+  });
+
+  function show_chart(){
+
+    var color = Chart.helpers.color;
+    var barChartData = {
+      labels: nama,
+      datasets: [{
+        label: 'All Analysis',
+        backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+        borderColor: window.chartColors.red,
+        borderWidth: 1,
+        data: alldata,
+      }, {
+        label: 'New',
+        backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
+        borderColor: window.chartColors.orange,
+        borderWidth: 1,
+        data: newdata,
+      },
+      {
+        label: 'Recheck',
+        backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+        borderColor: window.chartColors.blue,
+        borderWidth: 1,
+        data: rechekdata,
+      },
+      {
+        label: 'Test',
+        backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+        borderColor: window.chartColors.green,
+        borderWidth: 1,
+        data: testdata,
+      }
+    ]
+
+    };
+
+    var ctx = document.getElementById('dashboardChart1').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Analysis Result <?=$date?>'
+					}
+				}
+			});
+  }
+
+  function pie_chart(){
+
+    var color = Chart.helpers.color;
+    var barChartData = {
+      labels: ['New','Recheck','Test'],
+      datasets: [{
+        label: 'All Analysis',
+        backgroundColor: [
+            window.chartColors.orange,
+            window.chartColors.blue,
+            window.chartColors.green
+        ],
+        //borderColor: window.chartColors.red,
+        borderWidth: 1,
+        data: [ newdata.reduce(sumArray), rechekdata.reduce(sumArray), testdata.reduce(sumArray)],
+      }
+    ]
+
+    };
+
+    var ctx = document.getElementById('dashboardChart2').getContext('2d');
+		window.myBar = new Chart(ctx, {
+			type: 'doughnut',
+			data: barChartData,
+			options: {
+				responsive: true,
+				legend: {
+					position: 'top',
+				},
+				title: {
+					display: false,
+					text: 'Analysis Result <?=$date?>'
+				}
+			}
+		});
+  }
+
+  function sumArray(total, num) {
+    return total + num;
+  }
+
+  function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+  }
+
+  function show_waktu(){
+    var clientTime = new Date();
+    var d = new Date(clientTime.getTime() + Diff); //buat object date dengan menghitung selisih waktu client dan server
+    //console.log(d);
+  	var h = addZero(d.getHours());
+  	var m = addZero(d.getMinutes());
+  	var s = addZero(d.getSeconds());
+    var month = new Array();
+    month[0] = "Jan";
+    month[1] = "Feb";
+    month[2] = "Mar";
+    month[3] = "Apr";
+    month[4] = "May";
+    month[5] = "Jun";
+    month[6] = "Jul";
+    month[7] = "Aug";
+    month[8] = "Sep";
+    month[9] = "Oct";
+    month[10] = "Nov";
+    month[11] = "Dec";
+
+    var day = addZero(d.getDate());
+
+    $("#jam").html("<div class='countdown' data-animate='slide' style='font-size: 24px;'> "+
+                      "<div data-label='"+month[d.getMonth()]+" "+d.getFullYear()+"' class='part days no-divider bg-orange fg-white'> "+
+                        "<div class='digit'> "+
+                          "<span class='digit-placeholder'>0</span> "+
+                          "<span class='digit-value'>"+String(day).substring(0,2)+"</span> "+
+                        "</div> "+
+                        "<div class='digit'> "+
+                          "<span class='digit-placeholder'>0</span> "+
+                          "<span class='digit-value'>"+String(day).substring(1,2)+"</span> "+
+                        "</div> "+
+                      "</div> "+
+                     "<div data-label='HOURS' class='part hours no-divider bg-red fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(h).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(h).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                     "<div data-label='MINS' class='part minutes no-divider bg-green fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(m).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(m).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                     "<div data-label='SECS' class='part seconds no-divider bg-blue fg-white'> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(s).substring(0,2)+"</span> "+
+                       "</div> "+
+                       "<div class='digit'> "+
+                         "<span class='digit-placeholder'>0</span> "+
+                         "<span class='digit-value'>"+String(s).substring(1,2)+"</span> "+
+                       "</div> "+
+                     "</div> "+
+                   "</div>");
+  }
+
+
+</script>

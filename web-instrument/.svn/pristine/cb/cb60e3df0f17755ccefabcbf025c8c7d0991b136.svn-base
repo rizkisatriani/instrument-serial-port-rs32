@@ -1,0 +1,73 @@
+<?php
+
+	class Helper_model extends CI_Model
+	{
+
+		function __construct()
+		{
+			parent:: __construct();
+		}
+
+    function show_jam_analisa(){
+
+			$this->db->select('*');
+      $query = $this->db->get('jam_analisa');
+
+    	return $query->result();
+    }
+
+		function show_material_analisa($flag){
+			$this->db->select('*');
+			if ($flag != ''){
+
+				switch (substr($flag,0,1)){
+					case 'M':
+						$this->db->like('id_material', $flag);
+					break;
+					case 'k':
+						$this->db->like('id_klp', $flag);
+					break;
+				}
+			}
+      $query = $this->db->get('material_analisa');
+			//print_r($this->db->last_query());
+    	return $query->result();
+
+
+		}
+
+		function show_parameter_analisa($flag){
+			$this->db->select('*');
+			if ($flag != ''){
+				switch (substr($flag,0,1)){
+					case 'P':
+						$this->db->like('id_parameter', $flag);
+					break;
+					case 'k':
+						$this->db->where('id_klp', $flag);
+					break;
+				}
+
+			}
+      $query = $this->db->get('parameter_analisa');
+
+    	return $query->result();
+		}
+
+		function show_count_analysis_by_module(){
+
+				$query = $this->db->query('select count(DISTINCT(nomor)) AS jumlah,count(DISTINCT(IF(is_data=1,nomor,NULL))) as baru,
+																		COUNT(DISTINCT(IF(is_data=2,nomor,NULL))) as ricek, COUNT(DISTINCT(IF(is_data=3,nomor,NULL))) as test,
+																	modules.`desc` nama from hasil_analisa
+																	inner join modules
+																	on modules.`id` = hasil_analisa.`id_modul`
+																	where month(hasil_analisa.`tanggal`) = month(now())
+																	and year(hasil_analisa.`tanggal`) = YEAR(NOW())
+																	group by hasil_analisa.`id_modul`
+																	order by count(DISTINCT(nomor)) DESC
+																	limit 5');
+
+				return $query->result();
+		}
+
+  }

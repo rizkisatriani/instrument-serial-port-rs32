@@ -1,0 +1,169 @@
+<?php
+
+    //print_r($chek);
+    //print_r($var['jam']);
+    $bxCJ=0;
+    $evap=0;
+    $table = "";
+    $table2 = "";
+    $target ="";
+    $no=0;     
+    foreach($material as $val){
+        $nama_material = $val->name;
+        $id_material = $val->id_material;  
+        
+        $P001_id=""; 
+        $P001="";
+        $P003_id=""; 
+        $P003="";
+        $P012_id=""; 
+        $P012="";
+        $P027_id=""; 
+        $P027="";
+ 
+        foreach($analisa as $val_analisa){
+            $material_analisa = $val_analisa->id_material;  
+            if($id_material == $material_analisa){
+                
+                switch($val_analisa->id_parameter){
+                    case 'P001':
+                        $P001_id = $val_analisa->id;
+                        $P001 = $val_analisa->hasil; 
+                    break;
+                    case 'P003':
+                        $P003_id = $val_analisa->id;
+                        $P003 = $val_analisa->hasil;
+                    break;
+                    case 'P012':
+                        $P012_id = $val_analisa->id;
+                        $P012= $val_analisa->hasil;
+                    break;
+                    case 'P027':
+                        $P027_id = $val_analisa->id;
+                        $P027 = $val_analisa->hasil;
+                    break; 
+                }  
+                 
+            }  
+        }
+
+        switch ($id_material) {
+            case 'M006':
+                        $bxCJ=$P001;
+                        $evap='';  
+                break;
+            
+            default:
+                if($P001!=0||$P001!=""){
+                $evap=100-($P001/$bxCJ*100);
+                } else{ 
+                $evap='';
+                }
+                break;
+        }
+       
+         switch ($no) {
+             case 0:
+                $EXHAUST_STEAM="
+                    <td style='text-align:center;'>Press</td>
+                    <td style='text-align:center;'> $no </td>";
+                 break;
+             case 1:
+                $EXHAUST_STEAM="
+                    <td style='text-align:center;'>Temp</td>
+                    <td style='text-align:center;'> $no </td>";
+                 break;
+             case 2:
+                   $EXHAUST_STEAM='
+                    <th rowspan="2" class="bg-orange" colspan="2" style="text-align:center; vertical-align: middle;">VAPOUR STEAM</th>'; 
+               
+                 break;
+            case 3:
+            $EXHAUST_STEAM='';
+               break;
+            case 4:
+            $EXHAUST_STEAM="
+                    <td style='text-align:center;'>Press</td>
+                    <td style='text-align:center;'> $no </td>";
+               break;
+             case 5:
+                 $EXHAUST_STEAM="
+                    <td style='text-align:center;'>Temp</td>
+                    <td style='text-align:center;'> $no </td>";
+                 break; 
+             default:
+                 $EXHAUST_STEAM=' ';
+                 break;
+         }
+           $table .= "<tr>
+                    <td>$nama_material</td>
+                    <td style='text-align:center;'> $P001 </td>
+
+                    <td style='text-align:center;'> $P003 </td>
+
+                    <td style='text-align:center;'> $P027 </td>
+
+                    <td style='text-align:center;'>  
+                    <td style='text-align:center;'>$P012</td>
+                    <td style='text-align:center;'>$evap</td>
+                    <td style='text-align:center;'>$no</td>
+                    $EXHAUST_STEAM
+                 </tr>"; 
+                 $no++;
+       
+    }
+?> 
+
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="cell p-1 border-bottom bd-gray">
+                    <div class="d-flex flex-wrap flex-nowrap-lg flex-align-center flex-justify-center flex-justify-start-lg mb-2">
+                        <div class="w-50 mb-2 mb-0-lg" >
+                          <input type="text" data-role="input" data-prepend="Tanggal" value="<?=$header['tanggal']?>" readonly>
+                        </div>
+                        <div class="ml-2 w-50 mr-2 my-rows-wrapper">
+                          <input type="text" data-role="input" data-prepend="Jam Analisa" value="<?=$header['id_jam']?>" readonly>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="cell p-1" id='gridedit'> 
+                    <div class="row border-top bd-gray">
+<table  class="table striped table-border cell-border row-border cell-hover subcompact">
+    <thead >
+        <tr class="bg-orange" >
+            <th width='25%' rowspan="2" style='text-align:center; vertical-align: middle;' >Material</th>
+            <th width='5%' colspan="6" style='text-align:center;' >Data Analisa</th> 
+            <th width='15%' rowspan="2"style='text-align:center; vertical-align: middle;'>% Trans Cao</th>
+            <th width='30%' rowspan="2" colspan="2"style='text-align:center; vertical-align: middle;' >EXHAUST STEAM</th>
+        </tr>
+        <tr class="bg-orange" > 
+            <th width='5%' style='text-align:center;' >Brix</th>
+            <th width='5%' style='text-align:center;'>pH</th>
+            <th width='5%' style='text-align:center;'>Temp</th>
+        <th width='5%' style='text-align:center;'>Press</th>
+        <th width='5%' style='text-align:center;'>CaO</th> 
+            <th width='5%' style='text-align:center;'>% Evap.</th> 
+
+        </tr>
+    </thead>
+    <tbody>
+        <?=$table?> 
+    </tbody>
+</table>  
+</div>
+                  
+                  </div>                 
+              </div>
+              <div class="panel-title">
+                  <span class="caption"><?=$module_title?> : <b><?=$header['nomor']?></b></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

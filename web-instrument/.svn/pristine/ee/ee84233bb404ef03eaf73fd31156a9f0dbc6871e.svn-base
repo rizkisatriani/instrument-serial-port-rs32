@@ -1,0 +1,467 @@
+<?php
+// Query sudah OK  
+if($data1){
+    $kolom =  array(10,45,45,45,20,20); 
+include('pdf_tanggal_inc.php');   
+    $option = "";
+    $dep = "";
+    $divisi ="";
+    $unit = "";
+    $nama = "";
+    $nip ="";
+    $judul ="";
+    $cols[0] = $judul;
+    $cols[1] = $dep;
+    $cols[2] = $divisi;
+    $cols[3] = $unit;
+    $cols[4] = $option;
+    $cols[5] = $kolom; 
+    $cols[6] = $nama;
+    $cols[7] = $nip;
+$p = new PDF($cols);
+$p->AddPage();     
+
+//header table pertama 
+                    $html = "<table align='center' border='1' width='100%'> 
+                    <tr bgcolor='#EDEDED'>    
+                    <td width='4%' rowspan='2' align='center' valign='middle' size='6' style='B'>Material</td>
+                    <td width='4%' colspan='8' align='center' valign='middle' size='6' style='B'>Clear Juice</td>
+                    <td width='4%' colspan='2' align='center' valign='middle' size='6' style='B'>Filter Cake</td> 
+                    <td width='4%' colspan='8' align='center' valign='middle' size='6' style='B'>Raw Syrup</td> 
+                    </tr>  
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>RS (%Bx)</td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Turb. (NTU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>CaO (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Moist. (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>RS (%Bx)</td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>CaO (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>P2O5bfr (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>  
+                    </tr>       
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Target</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    </tr>     
+                    "; 
+                    $Clear_Juice_Brix="";
+                    $Clear_Juice_Polarization="";
+                    $Clear_Juice_pH="";
+                    $Clear_Juice_Reducing_Sugar="";
+                    $Clear_Juice_Turbidity="";
+                    $Clear_Juice_Calcium_Oxide_Content="";
+                    $Clear_Juice_Liquid_Colour="";
+                    $Filter_Cake_Polarization="";
+                    $Filter_Cake_Moisture_Content="";
+                    $Raw_Syrup_Brix="";
+                    $Raw_Syrup_Polarization="";
+                    $Raw_Syrup_pH="";
+                    $Raw_Syrup_Phospate_Content_before_dosing="";
+                    $Raw_Syrup_Reducing_Sugar="";
+                    $Raw_Syrup_Calcium_Oxide_Content="";
+                    $Raw_Syrup_Liquid_Colour="";
+ foreach ($data1 as $val) {  
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0; 
+
+    if ($val->Clear_Juice_Brix!=0&&$val->Clear_Juice_Polarization!=0)$pty1=round($val->Clear_Juice_Brix/$val->Clear_Juice_Polarization*100,2);
+    if ($val->Raw_Syrup_Brix!=0&&$val->Raw_Syrup_Polarization!=0)$pty2=round($val->Raw_Syrup_Brix/$val->Raw_Syrup_Polarization*100,2);
+
+            $Clear_Juice_Brix=$Clear_Juice_Brix+$val->Clear_Juice_Brix;
+            $Clear_Juice_Polarization=$Clear_Juice_Polarization+$val->Clear_Juice_Polarization;
+            $Clear_Juice_pH=$Clear_Juice_pH+$val->Clear_Juice_pH;
+            $Clear_Juice_Reducing_Sugar=$Clear_Juice_Reducing_Sugar+$val->Clear_Juice_Reducing_Sugar;
+            $Clear_Juice_Turbidity=$Clear_Juice_Turbidity+$val->Clear_Juice_Turbidity;
+            $Clear_Juice_Calcium_Oxide_Content=$Clear_Juice_Calcium_Oxide_Content+$val->Clear_Juice_Calcium_Oxide_Content;
+            $Clear_Juice_Liquid_Colour=$Clear_Juice_Liquid_Colour+$val->Clear_Juice_Liquid_Colour;
+            $Filter_Cake_Polarization=$Filter_Cake_Polarization+$val->Filter_Cake_Polarization;
+            $Filter_Cake_Moisture_Content=$Filter_Cake_Moisture_Content+$val->Filter_Cake_Moisture_Content;
+            $Raw_Syrup_Brix=$Raw_Syrup_Brix+$val->Raw_Syrup_Brix;
+            $Raw_Syrup_Polarization=$Raw_Syrup_Polarization+$val->Raw_Syrup_Polarization;
+            $Raw_Syrup_pH=$Raw_Syrup_pH+$val->Raw_Syrup_pH;
+            $Raw_Syrup_Phospate_Content_before_dosing=$Raw_Syrup_Phospate_Content_before_dosing+$val->Raw_Syrup_Phospate_Content_before_dosing;
+            $Raw_Syrup_Reducing_Sugar=$Raw_Syrup_Reducing_Sugar+$val->Raw_Syrup_Reducing_Sugar;
+            $Raw_Syrup_Calcium_Oxide_Content=$Raw_Syrup_Calcium_Oxide_Content+$val->Raw_Syrup_Calcium_Oxide_Content;
+            $Raw_Syrup_Liquid_Colour=$Raw_Syrup_Liquid_Colour+$val->Raw_Syrup_Liquid_Colour;
+
+           $html .= " <tr> <td width='4%' align='center' valign='middle' size='6' style='B'>$val->id_jam</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Brix</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Polarization</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$pty1</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_pH</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Reducing_Sugar</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Turbidity</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Calcium_Oxide_Content</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clear_Juice_Liquid_Colour</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Filter_Cake_Polarization</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Filter_Cake_Moisture_Content</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Brix</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Polarization</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$pty2</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_pH</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Phospate_Content_before_dosing</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Reducing_Sugar</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Calcium_Oxide_Content</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Raw_Syrup_Liquid_Colour</td>
+            </tr> ";  
+ }
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0;  
+                    if ($Clear_Juice_Brix!=0&&$Clear_Juice_Polarization!=0)$pty1=round($Clear_Juice_Brix/$Clear_Juice_Polarization*100,2);
+    if ($Raw_Syrup_Brix!=0&&$Raw_Syrup_Polarization!=0)$pty2=round($Raw_Syrup_Brix/$Raw_Syrup_Polarization*100,2); 
+ $html .= " <tr bgcolor='#EDEDED'>  
+            <td width='4%' align='center' valign='middle' size='6' style='B'>Average</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty1/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Reducing_Sugar/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Turbidity/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Calcium_Oxide_Content/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clear_Juice_Liquid_Colour/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Filter_Cake_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Filter_Cake_Moisture_Content/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty2/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Phospate_Content_before_dosing/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Reducing_Sugar/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Calcium_Oxide_Content/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Raw_Syrup_Liquid_Colour/$data_count."</td>
+            </tr> 
+            </table>";
+
+//header table kedua 
+
+             $html2 = "<table align='center' border='1' width='100%'> 
+                    <tr bgcolor='#EDEDED'>    
+                    <td width='4%' rowspan='2' align='center' valign='middle' size='6' style='B'>Material</td>
+                    <td width='4%' colspan='9' align='center' valign='middle' size='6' style='B'>Clarified Syrup</td>
+                    <td width='4%' colspan='5' align='center' valign='middle' size='6' style='B'>Sulphited Syrup</td> 
+                    <td width='4%' colspan='4' align='center' valign='middle' size='6' style='B'>pH</td> 
+                    </tr>  
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>RS (%Bx)</td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Turb. (NTU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>CaO (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>P2O5bfr (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>    
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Limed J.</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Sulp. J</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Final R.</td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Melting</td>  
+                    </tr>     
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Target</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    </tr> 
+                    "; 
+
+                    $Clarified_Syrup_Brix="";
+                    $Clarified_Syrup_Polarization="";
+                    $Clarified_Syrup_pH="";
+                    $Clarified_Syrup_Phospate_Content_before_dosing="";
+                    $Clarified_Syrup_Reducing_Sugar="";
+                    $Clarified_Syrup_Turbidity="";
+                    $Clarified_Syrup_Calcium_Oxide_Content="";
+                    $Clarified_Syrup_Liquid_Colour="";
+                    $Sulphited_Syrup_Brix="";
+                    $Sulphited_Syrup_Polarization="";
+                    $Sulphited_Syrup_pH="";
+                    $Sulphited_Syrup_Liquid_Colour="";
+                    $Limed_Juice_pH="";
+                    $Sulphited_Juice_pH="";
+                    $Final_Reaction_pH="";
+                    $Melting_pH="";
+ foreach ($data2 as $val) {  
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0; 
+
+    if ($val->Clarified_Syrup_Brix!=0&&$val->Clarified_Syrup_Polarization!=0)$pty1=round($val->Clarified_Syrup_Brix/$val->Clarified_Syrup_Polarization*100,2);
+    if ($val->Sulphited_Syrup_Brix!=0&&$val->Sulphited_Syrup_Polarization!=0)$pty2=round($val->Sulphited_Syrup_Brix/$val->Sulphited_Syrup_Polarization*100,2);
+
+$Clarified_Syrup_Brix=$Clarified_Syrup_Brix+$val->Clarified_Syrup_Brix;
+$Clarified_Syrup_Polarization=$Clarified_Syrup_Polarization+$val->Clarified_Syrup_Polarization;
+$Clarified_Syrup_pH=$Clarified_Syrup_pH+$val->Clarified_Syrup_pH;
+$Clarified_Syrup_Phospate_Content_before_dosing=$Clarified_Syrup_Phospate_Content_before_dosing+$val->Clarified_Syrup_Phospate_Content_before_dosing;
+$Clarified_Syrup_Reducing_Sugar=$Clarified_Syrup_Reducing_Sugar+$val->Clarified_Syrup_Reducing_Sugar;
+$Clarified_Syrup_Turbidity=$Clarified_Syrup_Turbidity+$val->Clarified_Syrup_Turbidity;
+$Clarified_Syrup_Calcium_Oxide_Content=$Clarified_Syrup_Calcium_Oxide_Content+$val->Clarified_Syrup_Calcium_Oxide_Content;
+$Clarified_Syrup_Liquid_Colour=$Clarified_Syrup_Liquid_Colour+$val->Clarified_Syrup_Liquid_Colour;
+$Sulphited_Syrup_Brix=$Sulphited_Syrup_Brix+$val->Sulphited_Syrup_Brix;
+$Sulphited_Syrup_Polarization=$Sulphited_Syrup_Polarization+$val->Sulphited_Syrup_Polarization;
+$Sulphited_Syrup_pH=$Sulphited_Syrup_pH+$val->Sulphited_Syrup_pH;
+$Sulphited_Syrup_Liquid_Colour=$Sulphited_Syrup_Liquid_Colour+$val->Sulphited_Syrup_Liquid_Colour;
+$Limed_Juice_pH=$Limed_Juice_pH+$val->Limed_Juice_pH;
+$Sulphited_Juice_pH=$Sulphited_Juice_pH+$val->Sulphited_Juice_pH;
+$Final_Reaction_pH=$Final_Reaction_pH+$val->Final_Reaction_pH;
+$Melting_pH=$Melting_pH+$val->Melting_pH;
+
+$html2 .= " <tr> <td width='4%' align='center' valign='middle' size='6' style='B'>$val->id_jam</td>
+         <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Brix</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Polarization</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$pty1</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_pH</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Phospate_Content_before_dosing</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Reducing_Sugar</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Turbidity</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Calcium_Oxide_Content</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Clarified_Syrup_Liquid_Colour</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Sulphited_Syrup_Brix</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Sulphited_Syrup_Polarization</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$pty2</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Sulphited_Syrup_pH</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Sulphited_Syrup_Liquid_Colour</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Limed_Juice_pH</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Sulphited_Juice_pH</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Final_Reaction_pH</td>
+<td width='4%' align='center' valign='middle' size='6' style='B'>$val->Melting_pH </td>
+            </tr> ";  
+
+}
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0;  
+                    if ($Clarified_Syrup_Brix!=0&&$Clarified_Syrup_Polarization!=0)$pty1=round($Clarified_Syrup_Brix/$Clarified_Syrup_Polarization*100,2);
+    if ($Sulphited_Syrup_Brix!=0&&$Sulphited_Syrup_Polarization!=0)$pty2=round($Sulphited_Syrup_Brix/$Sulphited_Syrup_Polarization*100,2); 
+ $html2 .= " <tr bgcolor='#EDEDED'>  
+            <td width='4%' align='center' valign='middle' size='6' style='B'>Average</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty1/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Phospate_Content_before_dosing/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Reducing_Sugar/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Turbidity/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Calcium_Oxide_Content/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Clarified_Syrup_Liquid_Colour/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Sulphited_Syrup_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Sulphited_Syrup_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty2/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Sulphited_Syrup_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Sulphited_Syrup_Liquid_Colour/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Limed_Juice_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Sulphited_Juice_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Final_Reaction_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Melting_pH/$data_count."</td>
+            </tr> 
+            </table>";
+
+//header table ketiga
+
+$html3 = "<table align='center' border='1' width='100%'> 
+                    <tr bgcolor='#EDEDED'>    
+                    <td width='4%' rowspan='2' align='center' valign='middle' size='6' style='B'>Material</td>
+                    <td width='4%' colspan='4' align='center' valign='middle' size='6' style='B'>Mud</td>
+                    <td width='4%' colspan='4' align='center' valign='middle' size='6' style='B'>Heavy Filtrate</td> 
+                    <td width='4%' colspan='4' align='center' valign='middle' size='6' style='B'>Light Filtrate</td> 
+                    <td width='4%' colspan='4' align='center' valign='middle' size='6' style='B'>Scum</td> 
+                    <td width='4%' colspan='2' align='center' valign='middle' size='6' style='B'>Saccharate Lime</td> 
+                    </tr>  
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>RS (%Bx)</td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Turb. (NTU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>CaO (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>P2O5bfr (ppm)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>    
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Brix (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pol (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Pty (%)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>pH</td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Colour (IU)</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Limed J.</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Sulp. J</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Final R.</td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Melting</td>  
+                    </tr>     
+                    <tr bgcolor='#EDEDED'>     
+                    <td width='4%' align='center' valign='middle' size='6' style='B'>Target</td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>   
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    <td width='4%' align='center' valign='middle' size='6' style='B'></td>  
+                    </tr> 
+                    "; 
+                    $Mud_Brix="";
+                    $Mud_Polarization="";
+                    $Mud_pH=""; 
+                    $Heavy_Filtrate_Brix="";
+                    $Heavy_Filtrate_Polarization="";
+                    $Heavy_Filtrate_pH=""; 
+                    $Light_Filtrate_Brix="";
+                    $Light_Filtrate_Polarization="";
+                    $Light_Filtrate_pH=""; 
+                    $Scum_Brix="";
+                    $Scum_Polarization="";
+                    $Scum_pH=""; 
+                    $Saccharate_Lime_pH="";
+                    $Saccharate_Lime_Beume="";
+                     foreach ($data3 as $val) {  
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0; 
+                    $pty4=0; 
+
+    if ($val->Mud_Brix!=0&&$val->Mud_Polarization!=0)$pty1=round($val->Mud_Brix/$val->Mud_Polarization*100,2);
+    if ($val->Heavy_Filtrate_Brix!=0&&$val->Heavy_Filtrate_Polarization!=0)$pty2=round($val->Heavy_Filtrate_Brix/$val->Heavy_Filtrate_Polarization*100,2);
+    if ($val->Light_Filtrate_Brix!=0&&$val->Light_Filtrate_Polarization!=0)$pty3=round($val->Light_Filtrate_Brix/$val->Light_Filtrate_Polarization*100,2);
+    if ($val->Scum_Brix!=0&&$val->Scum_Polarization!=0)$pty4=round($val->Scum_Brix/$val->Scum_Polarization*100,2);
+    
+    $Mud_Brix=$Mud_Brix+$val->Mud_Brix ;
+    $Mud_Polarization=$Mud_Polarization+$val->Mud_Polarization ;
+    $Mud_pH=$Mud_pH+$val->Mud_pH ; 
+    $Heavy_Filtrate_Brix=$Heavy_Filtrate_Brix+$val->Heavy_Filtrate_Brix ;
+    $Heavy_Filtrate_Polarization=$Heavy_Filtrate_Polarization+$val->Heavy_Filtrate_Polarization ;
+    $Heavy_Filtrate_pH=$Heavy_Filtrate_pH+$val->Heavy_Filtrate_pH ; 
+    $Light_Filtrate_Brix=$Light_Filtrate_Brix+$val->Light_Filtrate_Brix ;
+    $Light_Filtrate_Polarization=$Light_Filtrate_Polarization+$val->Light_Filtrate_Polarization ;
+    $Light_Filtrate_pH=$Light_Filtrate_pH+$val->Light_Filtrate_pH ; 
+    $Scum_Brix=$Scum_Brix+$val->Scum_Brix ;
+    $Scum_Polarization=$Scum_Polarization+$val->Scum_Polarization ;
+    $Scum_pH=$Scum_pH+$val->Scum_pH ; 
+    $Saccharate_Lime_pH=$Saccharate_Lime_pH+$val->Saccharate_Lime_pH ;
+    $Saccharate_Lime_Beume=$Saccharate_Lime_Beume+$val->Saccharate_Lime_Beume;
+
+    $html3 .= " <tr> <td width='4%' align='center' valign='middle' size='6' style='B'>$val->id_jam</td>
+         <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Mud_Brix</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Mud_Polarization</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$pty1</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Mud_pH</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Heavy_Filtrate_Brix</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Heavy_Filtrate_Polarization</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$pty2</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Heavy_Filtrate_pH</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Light_Filtrate_Brix</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Light_Filtrate_Polarization</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$pty3</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Light_Filtrate_pH</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Scum_Brix</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Scum_Polarization</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$pty4</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Scum_pH</td> 
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Saccharate_Lime_pH</td>
+        <td width='4%' align='center' valign='middle' size='6' style='B'>$val->Saccharate_Lime_Beume</td>
+            </tr> ";  
+        
+            }
+                    $pty1=0;
+                    $pty2=0;
+                    $pty3=0; 
+                    $pty4=0; 
+
+    if ($Mud_Brix!=0&&$Mud_Polarization!=0)$pty1=round($Mud_Brix/$Mud_Polarization*100,2);
+    if ($Heavy_Filtrate_Brix!=0&&$Heavy_Filtrate_Polarization!=0)$pty2=round($Heavy_Filtrate_Brix/$Heavy_Filtrate_Polarization*100,2);
+    if ($Light_Filtrate_Brix!=0&&$Light_Filtrate_Polarization!=0)$pty3=round($Light_Filtrate_Brix/$Light_Filtrate_Polarization*100,2);
+    if ($Scum_Brix!=0&&$Scum_Polarization!=0)$pty4=round($Scum_Brix/$Scum_Polarization*100,2);
+ $html3 .= " <tr bgcolor='#EDEDED'>  
+            <td width='4%' align='center' valign='middle' size='6' style='B'>Average</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Mud_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Mud_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty1/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Mud_pH/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Heavy_Filtrate_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Heavy_Filtrate_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty2/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Heavy_Filtrate_pH/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Light_Filtrate_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Light_Filtrate_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty3/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Light_Filtrate_pH/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Scum_Brix/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Scum_Polarization/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$pty4/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Scum_pH/$data_count."</td> 
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Saccharate_Lime_pH/$data_count."</td>
+            <td width='4%' align='center' valign='middle' size='6' style='B'>".$Saccharate_Lime_Beume/$data_count."</td>
+            </tr> 
+            </table>";
+    //  echo $html;
+$p->htmltable($html); 
+$p->Ln(2); 
+$p->htmltable($html2); 
+$p->Ln(2); 
+$p->htmltable($html3); 
+$p->Ln(2); 
+ 
+$tglName = date('YmdHis');   
+$p->output('DAILY BOILER WATER, CONDENSATE & CONDENSOR ANALYSIS REPORT_'.$tglName.'.pdf','I');  
+  }else{
+    echo " Tidak Ada Data !!";
+}
+
+?>

@@ -1,0 +1,181 @@
+<?php
+
+    //print_r($chek);
+    //print_r($var['jam']);
+    $table = "";
+    $target ="";
+    $PTY="";
+    
+    foreach($material as $val){
+        $nama_material = $val->name;
+        $id_material = $val->id_material;
+        
+        switch($val->id_material){
+            case 'M006': 
+            case 'M009': $target = "Turb < 120"; break;
+            case 'M007': $target = "pol < 1.5"; break;
+            case 'M008': $target = "brix > 58"; break;
+            case 'M010': $target = "pH 54 - 56"; break;
+            default: $target = ""; break;
+        }
+        
+        $P009_id="";$P010_id="";$P001_id="";$P002_id="";$P076_id="";$P003_id="";$P007_id="";$P008_id="";$P011_id="";$P012_id="";$P006_id="";$P005_id="";$P013_id="";$P077_id="";$P075_id="";
+        $P009 ="";$P010="";$P001="";$P002="";$P076="";$P003="";$P007="";$P008="";$P011="";$P012="";$P006="";$P005="";$P013="";$P077="";$P075="";
+        
+        foreach($analisa as $val_analisa){
+            $material_analisa = $val_analisa->id_material;
+            
+            if($id_material == $material_analisa){
+                
+                switch($val_analisa->id_parameter){
+                    case 'P001':
+                        $P001_id = $val_analisa->id;
+                        $P001 = $val_analisa->hasil;
+                    break;
+                    case 'P002':
+                        $P002_id = $val_analisa->id;
+                        $P002 = $val_analisa->hasil;
+                    break;
+                    case 'P003':
+                        $P003_id = $val_analisa->id;
+                        $P003 = $val_analisa->hasil;
+                    break;
+                    case 'P007':
+                        $P007_id = $val_analisa->id;
+                        $P007 = $val_analisa->hasil;
+                    break;
+                    case 'P008':
+                        $P008_id = $val_analisa->id;
+                        $P008 = $val_analisa->hasil;
+                    break;
+                    case 'P011':
+                        $P011_id = $val_analisa->id;
+                        $P011 = $val_analisa->hasil;
+                    break;
+                    case 'P012':
+                        $P012_id = $val_analisa->id;
+                        $P012 = $val_analisa->hasil;
+                    break;
+                    case 'P006':
+                        $P006_id = $val_analisa->id;
+                        $P006 = $val_analisa->hasil;
+                    break;
+                    case 'P005':
+                        $P005_id = $val_analisa->id;
+                        $P005 = $val_analisa->hasil;
+                    break;
+                    case 'P013':
+                        $P013_id = $val_analisa->id;
+                        $P013 = $val_analisa->hasil;
+                    break;
+                    case 'P077':
+                        $P077_id = $val_analisa->id;
+                        $P077 = $val_analisa->hasil;
+                    break;
+                    case 'P075':
+                        $P075_id = $val_analisa->id;
+                        $P075 = $val_analisa->hasil;
+                    break;
+                    case 'P009':
+                        $P009_id = $val_analisa->id;
+                        $P009 = $val_analisa->hasil;
+                    break;
+                    case 'P010':
+                        $P010_id = $val_analisa->id;
+                        $P010 = $val_analisa->hasil;
+                    break;
+                    case 'P076':
+                        $P076_id = $val_analisa->id;
+                        $P076 = $val_analisa->hasil;
+                    break;
+                }
+
+                
+                if( $P001 !="" or $P001!= 0 ){
+                    $PTY = $P002 / $P001 * 100; 
+                }else{
+                    $PTY = "";
+                }
+                
+            }
+        }
+        
+        $table .= "<tr>
+                    <td>$nama_material</td>
+                    <td>$target</td>
+            		<td style='text-align:center;'><a class='button-custom' >$P001</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P002</a></td>
+            		<td style='text-align:center;'>$PTY</td>
+            		<td style='text-align:center;'><a class='button-custom' >$P003</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P007</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P008</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P011</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P012</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P006</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P005</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P013</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P077</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P075</a></td>  
+            		<td style='text-align:center;'><a class='button-custom' >$P009</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P010</a></td>
+            		<td style='text-align:center;'><a class='button-custom' >$P076</a></td>
+                 </tr>";
+    }
+?>
+
+<div class="panel mt-4">
+  <div class="row">
+      <div class="cell"> <!--<div class="cell-md-6">!-->
+          <div class="panel" id="analisaph1">
+              <div data-role="panel" data-title-caption="ANALISA PH" data-collapsible="true"
+                  data-title-icon="<span class='mif-lab'></span>" class="panel-content" data-role-panel="true">
+                  <div class="cell p-1 border-bottom bd-gray">
+                    <div class="d-flex flex-wrap flex-nowrap-lg flex-align-center flex-justify-center flex-justify-start-lg mb-2">
+                        <div class="w-50 mb-2 mb-0-lg" >
+                          <input type="text" data-role="input" data-prepend="Tanggal" value="<?=$header['tanggal']?>" readonly>
+                        </div>
+                        <div class="ml-2 w-50 mr-2 my-rows-wrapper">
+                          <input type="text" data-role="input" data-prepend="Jam Analisa" value="<?=$header['id_jam']?>" readonly>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="cell p-1" id='gridedit'> 
+                    <table class="table striped table-border cell-border row-border cell-hover subcompact">
+                        <thead>
+                            <tr class="bg-orange">
+                                <th width='10%' style='text-align:center;' >Material</th>
+                                <th width='6%' style='text-align:center;'>Target</th>
+                                <th width='5%' style='text-align:center;'>Brix(%)</th>
+                                <th width='5%' style='text-align:center;'>Pol(%)</th>
+                        		<th width='5%' style='text-align:center;'>Pty(%)</th>
+                        		<th width='5%' style='text-align:center;'>pH</th>
+                        		<th width='5%' style='text-align:center;'>RS(%Bx)</th>
+                        		<th width='5%' style='text-align:center;'>Moist(%)</th>
+                        		<th width='5%' style='text-align:center;'>Turb(NTU)</th>
+                        		<th width='5%' style='text-align:center;'>CaO(ppm)</th>
+                        		<th width='5%' style='text-align:center;'>P2O5bfr(ppm)</th>
+                        		<th width='5%' style='text-align:center;'>P2O5afr(ppm)</th>
+                        		<th width='5%' style='text-align:center;'>Colour(IU)</th>
+                        		<th width='5%' style='text-align:center;'>Solid(%)</th>
+                        		<th width='5%' style='text-align:center;'>Losses(%)</th>
+                        		<th width='5%' style='text-align:center;'>PI(%)</th>
+                        		<th width='5%' style='text-align:center;'>Fiber(%)</th>
+                        		<th width='5%' style='text-align:center;'>Beume(Be)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?=$table?>
+                        </tbody>
+                    </table>
+                  
+                  </div>                 
+              </div>
+              <div class="panel-title">
+                  <span class="caption"><?=$module_title?> : <b><?=$header['nomor']?></b></span>
+                  <span class="mif-lamp fg-green icon"></span>
+                  <span class="dropdown-toggle marker-center active-toggle"></span>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
